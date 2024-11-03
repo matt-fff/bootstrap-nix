@@ -76,6 +76,13 @@ nix-channel --add https://nixos.org/channels/nixos-unstable nixos || {
   exit 1
 }
 
+# Update nix channels
+echo "Updating nix channels..."
+nix-channel --update || {
+  echo "Error: Failed to update nix channels" >&2
+  exit 1
+}
+
 # Rebuild NixOS configuration
 if ! nixos-rebuild switch; then
     echo "Failed to rebuild NixOS configuration" 1>&2
@@ -83,3 +90,8 @@ if ! nixos-rebuild switch; then
 fi
 
 echo "Successfully completed NixOS configuration update"
+
+cd "$SCRIPT_DIR" || {
+  echo "Error: Failed to change to script directory" >&2
+  exit 1
+}

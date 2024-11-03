@@ -12,6 +12,7 @@ git clone https://github.com/matt-fff/bootstrap-nix
 ```
 
 ## Run the script to update the Nix OS configuration
+You will be prompted for your desired hostname
 ```
 sudo ./bootstrap-1.sh
 ```

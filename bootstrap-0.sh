@@ -3,6 +3,8 @@
 # Exit on any error
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 # Create workspace directories
 echo "Creating workspace directories..."
 echo "oss matt-fff scratch" \
@@ -35,5 +37,10 @@ git clone https://github.com/matt-fff/.chezmoi.git ~/.config/chezmoi || {
 echo "Cloning nixpkgs repository..."
 git clone https://github.com/matt-fff/my-nixpkgs.git ~/Workspaces/matt-fff/my-nixpkgs || {
   echo "Error: Failed to clone nixpkgs repository" >&2
+  exit 1
+}
+
+cd "$SCRIPT_DIR" || {
+  echo "Error: Failed to change to script directory" >&2
   exit 1
 }
