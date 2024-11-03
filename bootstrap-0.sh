@@ -20,13 +20,6 @@ cd ~/Workspaces || {
   exit 1
 }
 
-# Enter nix-shell with git
-echo "Installing git via nix-shell..."
-nix-shell -p git || {
-  echo "Error: Failed to enter nix-shell with git" >&2
-  exit 1
-}
-
 # Clone repositories
 echo "Cloning dotfiles repository..."
 git clone https://github.com/matt-fff/.chezmoi.git ~/.config/chezmoi || {
