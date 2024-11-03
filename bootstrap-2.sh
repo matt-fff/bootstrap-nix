@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Create .age directory
 echo "Creating .age directory..."
-mkdir ~/.age/ || {
+mkdir -p ~/.age/ || {
   echo "Error: Failed to create .age directory" >&2
   exit 1
 }
