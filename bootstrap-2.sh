@@ -21,13 +21,16 @@ if [ -z "$donor_hostname" ]; then
   exit 1
 fi
 
-# Copy age key from donor system
-echo "Copying age key from donor system..."
-scp "matt@${donor_hostname}:.age/chezmoi.txt" ~/.age/chezmoi.txt || {
-  echo "Error: Failed to copy age key from donor system" >&2
-  exit 1
-}
-
+# Only copy age key if it doesn't already exist
+if [ ! -f ~/.age/chezmoi.txt ]; then
+  echo "Copying age key from donor system..."
+  scp "matt@${donor_hostname}:.age/chezmoi.txt" ~/.age/chezmoi.txt || {
+    echo "Error: Failed to copy age key from donor system" >&2
+    exit 1
+  }
+else
+  echo "Age key already exists, skipping copy..."
+fi
 
 echo "Initializing chezmoi..."
 chezmoi init https://github.com/matt-fff/chez-home.git || {
