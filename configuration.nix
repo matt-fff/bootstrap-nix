@@ -162,7 +162,7 @@ in
   services.xrdp = {
     enable = true;
     openFirewall = true; 
-    defaultWindowManager = "${pkgs.gnome-session}/bin/gnome-session";
+    defaultWindowManager = "${pkgs.gnome3.gnome-session}/bin/gnome-session";
   };
 
   security.rtkit.enable = true;

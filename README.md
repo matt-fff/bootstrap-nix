@@ -8,13 +8,13 @@ git clone https://github.com/matt-fff/bootstrap-nix
 
 ## Run the baseline script
 ```
-./bootstrap-0.sh
+./bs-0-baseline.sh
 ```
 
 ## Run the script to update the Nix OS configuration
 You will be prompted for your desired hostname
 ```
-sudo ./bootstrap-1.sh
+sudo ./bs-1-setup-os.sh
 ```
 If something breaks, you can revert to the backup of the config with:
 ```
@@ -34,6 +34,14 @@ You'll need to use the donor system and type the link manually.
 With the system logged in, you can run the script that bootstraps chezmoi.
 You'll be prompted for the donor system name and the password used to encrypt the github token on the donor system.
 ```
-./bootstrap-2.sh
+./bs-2-setup-home.sh
 ```
+
+## Run cleanup script
+```
+./bs-3-finalize.sh
+```
+
+Reboot
+
 

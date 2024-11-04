@@ -15,17 +15,47 @@ git -C ~/.config/nixpkgs remote set-url origin git@github.com:matt-fff/my-nixpkg
 git -C ~/.local/share/chezmoi remote set-url origin git@github.com:matt-fff/chez-home.git
 
 echo "Cloning additional repositories..."
-git clone git@github.com:matt-fff/deepthought.git ~/Workspaces/matt-fff/deepthought
-git clone git@github.com:matt-fff/cutter-templates.git ~/Workspaces/matt-fff/cutter-templates
 
+# Clone workspaces repositories
+for repo in "deepthought" "cutter-templates"; do
+    target_dir="$HOME/Workspaces/matt-fff/$repo"
+    if [ ! -d "$target_dir" ]; then
+        git clone "git@github.com:matt-fff/$repo.git" "$target_dir"
+    else
+        echo "Directory already exists: $target_dir"
+    fi
+done
+
+# Create OpenSCAD libraries directory
 mkdir -p ~/.local/share/OpenSCAD/libraries
-git clone git@github.com:matt-fff/openscad-libraries.git ~/.local/share/OpenSCAD/libraries/openscad-libraries
-git clone git@github.com:matt-fff/scadlib.git ~/.local/share/OpenSCAD/libraries/scadlib
-git clone git@github.com:BelfrySCAD/BOSL2.git ~/.local/share/OpenSCAD/libraries/BOSL2
-git clone git@github.com:codefold/cc-scad.git ~/.local/share/OpenSCAD/libraries/cc-scad
-git clone git@github.com:solidboredom/constructive.git ~/.local/share/OpenSCAD/libraries/constructive
-git clone git@github.com:tallakt/bladegen.git ~/.local/share/OpenSCAD/libraries/bladegen-lib
-ln -s ~/.local/share/OpenSCAD/libraries/bladegen-lib/libraries/bladegen ~/.local/share/OpenSCAD/libraries/bladegen
+
+# Define OpenSCAD repositories to clone
+declare -A scad_repos=(
+    ["openscad-libraries"]="matt-fff/openscad-libraries"
+    ["scadlib"]="matt-fff/scadlib"
+    ["BOSL2"]="BelfrySCAD/BOSL2"
+    ["cc-scad"]="codefold/cc-scad"
+    ["constructive"]="solidboredom/constructive"
+    ["bladegen-lib"]="tallakt/bladegen"
+)
+
+# Clone OpenSCAD repositories
+for dir in "${!scad_repos[@]}"; do
+    target_dir="$HOME/.local/share/OpenSCAD/libraries/$dir"
+    if [ ! -d "$target_dir" ]; then
+        git clone "git@github.com:${scad_repos[$dir]}.git" "$target_dir"
+    else
+        echo "Directory already exists: $target_dir"
+    fi
+done
+
+# Create bladegen symlink if it doesn't exist
+bladegen_link="$HOME/.local/share/OpenSCAD/libraries/bladegen"
+if [ ! -L "$bladegen_link" ]; then
+    ln -s ~/.local/share/OpenSCAD/libraries/bladegen-lib/libraries/bladegen "$bladegen_link"
+else
+    echo "Symlink already exists: $bladegen_link"
+fi
 
 cd "$SCRIPT_DIR" || {
   echo "Error: Failed to change to script directory" >&2

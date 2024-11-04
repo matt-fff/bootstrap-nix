@@ -68,11 +68,17 @@ if ! sed -i "s/networking.hostName = \"work\"/networking.hostName = \"$hostname\
     exit 1
 fi
 
+# Add nix channel
+echo "Adding nixos-24.05 channel..."
+nix-channel --add https://nixos.org/channels/nixos-24.05 nixos || {
+  echo "Error: Failed to add nixos-24.05 channel" >&2
+  exit 1
+}
 
 # Add nix channel
 echo "Adding nixos-unstable channel..."
-nix-channel --add https://nixos.org/channels/nixos-unstable nixos || {
-  echo "Error: Failed to add nixos channel" >&2
+nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable || {
+  echo "Error: Failed to add nixos-unstable channel" >&2
   exit 1
 }
 
