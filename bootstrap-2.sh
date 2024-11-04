@@ -5,6 +5,8 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+rm -rf ~/.config/home-manager 2>/dev/null || true
+
 # Install home-manager
 echo "Installing home-manager..."
 if ! nix-shell '<home-manager>' -A install; then
@@ -72,6 +74,8 @@ gh auth login --with-token < ~/.age/github.token || {
   echo "Error: Failed to login to GitHub" >&2
   exit 1
 }
+
+rm -rf ~/.local/share/chezmoi 2>/dev/null || true
 
 gh repo clone matt-fff/chez-home ~/.local/share/chezmoi || {
   echo "Error: Failed to clone chez-home repository" >&2
