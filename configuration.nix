@@ -116,6 +116,7 @@ in
     chezmoi
     age
     gh
+    dconf
 
     # Custom packages
     blurlock
