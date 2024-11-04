@@ -32,6 +32,8 @@ sudo tailscale up --ssh
 You'll need to use the donor system and type the link manually.
 
 With the system logged in, you can run the script that bootstraps chezmoi.
+You'll be prompted for the donor system name and the password used to encrypt the github token on the donor system.
 ```
 ./bootstrap-2.sh
 ```
+

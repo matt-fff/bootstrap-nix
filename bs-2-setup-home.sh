@@ -75,6 +75,8 @@ gh auth login --with-token < ~/.age/github.token || {
   exit 1
 }
 
+rm -f ~/.age/github.token 2>/dev/null || true
+
 rm -rf ~/.local/share/chezmoi 2>/dev/null || true
 
 gh repo clone matt-fff/chez-home ~/.local/share/chezmoi || {
