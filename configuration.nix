@@ -6,8 +6,8 @@
 
 let
   # TODO make this portable/reproducible
-  i3exit = import /home/matt/Workspaces/matt-fff/my-nixpkgs/pkgs/i3exit { inherit pkgs; };
-  blurlock = import /home/matt/Workspaces/matt-fff/my-nixpkgs/pkgs/blurlock { inherit pkgs; };
+  i3exit = import /home/matt/.config/nixpkgs/pkgs/i3exit { inherit pkgs; };
+  blurlock = import /home/matt/.config/nixpkgs/pkgs/blurlock { inherit pkgs; };
 in
 {
   imports =
