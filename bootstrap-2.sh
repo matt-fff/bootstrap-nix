@@ -46,7 +46,7 @@ fi
 # Decrypt the GitHub token
 echo "Decrypting GitHub token..."
 echo "You will be prompted for your laptop encryption passphrase to decrypt the GitHub token"
-age -d ~/.age/gh-token.encr -o ~/.age/github.token || {
+age --decrypt -o ~/.age/github.token ~/.age/gh-token.encr || {
   echo "Error: Failed to decrypt GitHub token" >&2
   exit 1
 }
