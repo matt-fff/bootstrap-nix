@@ -32,6 +32,31 @@ else
   echo "Age key already exists, skipping copy..."
 fi
 
+# Only copy gh token if it doesn't already exist
+if [ ! -f ~/.age/gh-token.encr ]; then
+  echo "Copying GitHub token from donor system..."
+  scp "matt@${donor_hostname}:.age/gh-token.encr" ~/.age/gh-token.encr || {
+    echo "Error: Failed to copy GitHub token from donor system" >&2
+    exit 1
+  }
+else
+  echo "GitHub token already exists, skipping copy..."
+fi
+
+# Decrypt the GitHub token
+echo "Decrypting GitHub token..."
+echo "You will be prompted for your laptop encryption passphrase to decrypt the GitHub token"
+age -d ~/.age/gh-token.encr -o ~/.age/github.token || {
+  echo "Error: Failed to decrypt GitHub token" >&2
+  exit 1
+}
+
+echo "Logging in to GitHub..."
+gh auth login --with-token < ~/.age/github.token || {
+  echo "Error: Failed to login to GitHub" >&2
+  exit 1
+}
+
 echo "Initializing chezmoi..."
 chezmoi init https://github.com/matt-fff/chez-home.git || {
   echo "Error: Failed to initialize chezmoi" >&2

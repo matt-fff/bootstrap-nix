@@ -115,6 +115,7 @@ in
     nushell
     chezmoi
     age
+    gh
 
     # Custom packages
     blurlock
