@@ -44,12 +44,16 @@ else
 fi
 
 # Decrypt the GitHub token
-echo "Decrypting GitHub token..."
-echo "You will be prompted for your laptop encryption passphrase to decrypt the GitHub token"
-age --decrypt -o ~/.age/github.token ~/.age/gh-token.encr || {
-  echo "Error: Failed to decrypt GitHub token" >&2
-  exit 1
-}
+if [ ! -f ~/.age/github.token ]; then
+  echo "Decrypting GitHub token..."
+  echo "You will be prompted for your laptop encryption passphrase to decrypt the GitHub token"
+  age --decrypt -o ~/.age/github.token ~/.age/gh-token.encr || {
+    echo "Error: Failed to decrypt GitHub token" >&2
+    exit 1
+  }
+else
+  echo "GitHub token already decrypted, skipping..."
+fi
 
 echo "Logging in to GitHub..."
 gh auth login --with-token < ~/.age/github.token || {
