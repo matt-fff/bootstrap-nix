@@ -67,7 +67,7 @@ gh repo clone matt-fff/chez-home ~/.local/share/chezmoi || {
 }
 
 echo "Applying chezmoi configuration..."
-chezmoi apply -v --force || {
+chezmoi apply --force || {
   echo "Error: Failed to apply chezmoi configuration" >&2
   exit 1
 }

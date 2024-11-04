@@ -76,6 +76,13 @@ nix-channel --add https://nixos.org/channels/nixos-unstable nixos || {
   exit 1
 }
 
+# Add home-manager channel
+echo "Adding home-manager channel..."
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager || {
+  echo "Error: Failed to add home-manager channel" >&2
+  exit 1
+}
+
 # Update nix channels
 echo "Updating nix channels..."
 nix-channel --update || {
@@ -86,6 +93,11 @@ nix-channel --update || {
 # Rebuild NixOS configuration
 if ! nixos-rebuild switch; then
     echo "Failed to rebuild NixOS configuration" 1>&2
+    exit 1
+fi
+
+if ! nix-shell '<home-manager>' -A install; then
+    echo "Failed to install home-manager" 1>&2
     exit 1
 fi
 
