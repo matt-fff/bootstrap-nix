@@ -20,6 +20,8 @@ cd ~/Workspaces || {
   exit 1
 }
 
+rm -rf ~/.config/chezmoi 2>/dev/null || true
+
 # Clone repositories
 echo "Cloning dotfiles repository..."
 git clone https://github.com/matt-fff/.chezmoi.git ~/.config/chezmoi || {
