@@ -96,11 +96,6 @@ if ! nixos-rebuild switch; then
     exit 1
 fi
 
-if ! nix-shell '<home-manager>' -A install; then
-    echo "Failed to install home-manager" 1>&2
-    exit 1
-fi
-
 echo "Successfully completed NixOS configuration update"
 
 cd "$SCRIPT_DIR" || {

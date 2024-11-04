@@ -5,6 +5,13 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+# Install home-manager
+echo "Installing home-manager..."
+if ! nix-shell '<home-manager>' -A install; then
+    echo "Failed to install home-manager" 1>&2
+    exit 1
+fi
+
 # Create .age directory
 echo "Creating .age directory..."
 mkdir -p ~/.age/ || {
@@ -12,35 +19,40 @@ mkdir -p ~/.age/ || {
   exit 1
 }
 
-# Prompt for donor hostname
-echo -n "Enter donor hostname for age key retrieval: "
-read -r donor_hostname
+# Check if we need to copy any files from donor system
+if [ ! -f ~/.age/chezmoi.txt ] || [ ! -f ~/.age/gh-token.encr ]; then
+  # Prompt for donor hostname only if needed
+  echo -n "Enter donor hostname for age key retrieval: "
+  read -r donor_hostname
 
-if [ -z "$donor_hostname" ]; then
-  echo "Error: Donor hostname cannot be empty" >&2
-  exit 1
-fi
-
-# Only copy age key if it doesn't already exist
-if [ ! -f ~/.age/chezmoi.txt ]; then
-  echo "Copying age key from donor system..."
-  scp "matt@${donor_hostname}:.age/chezmoi.txt" ~/.age/chezmoi.txt || {
-    echo "Error: Failed to copy age key from donor system" >&2
+  if [ -z "$donor_hostname" ]; then
+    echo "Error: Donor hostname cannot be empty" >&2
     exit 1
-  }
-else
-  echo "Age key already exists, skipping copy..."
-fi
+  fi
 
-# Only copy gh token if it doesn't already exist
-if [ ! -f ~/.age/gh-token.encr ]; then
-  echo "Copying GitHub token from donor system..."
-  scp "matt@${donor_hostname}:.age/gh-token.encr" ~/.age/gh-token.encr || {
-    echo "Error: Failed to copy GitHub token from donor system" >&2
-    exit 1
-  }
+  # Only copy age key if it doesn't already exist
+  if [ ! -f ~/.age/chezmoi.txt ]; then
+    echo "Copying age key from donor system..."
+    scp "matt@${donor_hostname}:.age/chezmoi.txt" ~/.age/chezmoi.txt || {
+      echo "Error: Failed to copy age key from donor system" >&2
+      exit 1
+    }
+  else
+    echo "Age key already exists, skipping copy..."
+  fi
+
+  # Only copy gh token if it doesn't already exist
+  if [ ! -f ~/.age/gh-token.encr ]; then
+    echo "Copying GitHub token from donor system..."
+    scp "matt@${donor_hostname}:.age/gh-token.encr" ~/.age/gh-token.encr || {
+      echo "Error: Failed to copy GitHub token from donor system" >&2
+      exit 1
+    }
+  else
+    echo "GitHub token already exists, skipping copy..."
+  fi
 else
-  echo "GitHub token already exists, skipping copy..."
+  echo "All required files present, skipping donor system copy..."
 fi
 
 # Decrypt the GitHub token
