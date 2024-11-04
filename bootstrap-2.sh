@@ -57,9 +57,8 @@ gh auth login --with-token < ~/.age/github.token || {
   exit 1
 }
 
-echo "Initializing chezmoi..."
-chezmoi init https://github.com/matt-fff/chez-home.git || {
-  echo "Error: Failed to initialize chezmoi" >&2
+gh repo clone matt-fff/chez-home ~/.local/share/chezmoi || {
+  echo "Error: Failed to clone chez-home repository" >&2
   exit 1
 }
 
