@@ -91,7 +91,7 @@ nix-channel --update || {
 }
 
 # Rebuild NixOS configuration
-if ! nixos-rebuild switch; then
+if ! nixos-rebuild switch --upgrade; then
     echo "Failed to rebuild NixOS configuration" 1>&2
     exit 1
 fi
