@@ -31,26 +31,29 @@ if [ ! -f configuration.nix.bak ]; then
     echo "Created backup at configuration.nix.bak"
 fi
 
-# Extract LUKS configuration to new file
-if ! echo "{ config, lib, pkgs, ... }:
+# Extract LUKS configuration to new file if it doesn't exist
+if [ ! -f luks-configuration.nix ]; then
+    if ! echo "{ config, lib, pkgs, ... }:
 
 {
   boot.initrd.luks.devices = {" > luks-configuration.nix; then
-    echo "Failed to create luks-configuration.nix" 1>&2
-    exit 1
-fi
+        echo "Failed to create luks-configuration.nix" 1>&2
+        exit 1
+    fi
 
-if ! grep "boot.initrd.luks.devices" configuration.nix | sed 's/^.*devices\./    /' >> luks-configuration.nix; then
-    echo "Failed to extract LUKS configuration" 1>&2
-    exit 1
-fi
+    if ! grep "boot.initrd.luks.devices" configuration.nix | sed 's/^.*devices\./    /' >> luks-configuration.nix; then
+        echo "Failed to extract LUKS configuration" 1>&2
+        exit 1
+    fi
 
-if ! echo "  };
+    if ! echo "  };
 }" >> luks-configuration.nix; then
-    echo "Failed to complete luks-configuration.nix" 1>&2
-    exit 1
+        echo "Failed to complete luks-configuration.nix" 1>&2
+        exit 1
+    fi
+    
+    echo "Created luks-configuration.nix"
 fi
-
 
 # Replace configuration.nix with the one from SCRIPT_DIR
 if ! cp "$SCRIPT_DIR/configuration.nix" configuration.nix; then
@@ -58,12 +61,24 @@ if ! cp "$SCRIPT_DIR/configuration.nix" configuration.nix; then
     exit 1
 fi
 
-# Prompt for hostname and update configuration
-echo -n "Enter hostname (default: newnix): "
-read -r hostname
-hostname=${hostname:-newnix}
+# Add graphics configuration import if it exists
+if [ -f graphics-configuration.nix ]; then
+    if ! sed -i '/\.\/luks-configuration.nix/a\      .\/graphics-configuration.nix' configuration.nix; then
+        echo "Failed to add graphics configuration import" 1>&2
+        exit 1
+    fi
+    echo "Added graphics configuration import"
+fi
 
-if ! sed -i "s/networking.hostName = \"work\"/networking.hostName = \"$hostname\"/" configuration.nix; then
+# Get hostname from command line argument or prompt
+hostname=$1
+if [ -z "$hostname" ]; then
+    echo -n "Enter hostname (default: newnix): "
+    read -r hostname
+    hostname=${hostname:-newnix}
+fi
+
+if ! sed -i "s/networking.hostName = \"fake-hostname\"/networking.hostName = \"$hostname\"/" configuration.nix; then
     echo "Failed to update hostname in configuration.nix" 1>&2
     exit 1
 fi

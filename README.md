@@ -12,10 +12,10 @@ git clone https://github.com/matt-fff/bootstrap-nix
 ```
 
 ## Run the script to update the Nix OS configuration
-You will be prompted for your desired hostname
 ```
-sudo ./bs-1-setup-os.sh
+su -c './bs-1-setup-os.sh desired-hostname'
 ```
+
 If something breaks, you can revert to the backup of the config with:
 ```
 sudo ./reset-config.sh
@@ -45,3 +45,12 @@ You'll be prompted for the donor system name and the password used to encrypt th
 Reboot
 
 
+## Graphics Configuration
+
+https://wiki.nixos.org/wiki/AMD_GPU
+https://nixos.wiki/wiki/Nvidia
+
+Place your changes in `/etc/nixos/graphics-configuration.nix`. You can either add the dependency to `configuration.nix` manually or re-run `bs-1-setup-os.sh`, which will automatically add the import if it detects a graphics config.
+
+If you're using a laptop, check if it's optimized here:
+https://github.com/NixOS/nixos-hardware

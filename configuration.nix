@@ -8,6 +8,7 @@ let
   # TODO make this portable/reproducible
   i3exit = import /home/matt/.config/nixpkgs/pkgs/i3exit { inherit pkgs; };
   blurlock = import /home/matt/.config/nixpkgs/pkgs/blurlock { inherit pkgs; };
+  upkg = import <nixos-unstable> { inherit pkgs; };
 in
 {
   imports =
@@ -20,7 +21,7 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "work"; # Define your hostname.
+  networking.hostName = "fake-hostname"; # Define your hostname.
  # networking.wireless = {
  #   enable = true;
  #   userControlled.enable = true;
@@ -86,7 +87,6 @@ in
     gdb
     killall
     python312
-    neovim
     nodejs
     git
     dig
@@ -112,11 +112,16 @@ in
     networkmanagerapplet
     pavucontrol
     pipewire
-    nushell
     chezmoi
     age
     gh
     dconf
+    lshw
+    vim
+
+    # Unstable packages
+    upkg.neovim
+    upkg.nushell
 
     # Custom packages
     blurlock
