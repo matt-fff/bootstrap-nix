@@ -4,7 +4,7 @@
 ```
 nix-shell -p git
 git clone https://github.com/matt-fff/bootstrap-nix
-``
+```
 
 ## Run the baseline script
 ```
