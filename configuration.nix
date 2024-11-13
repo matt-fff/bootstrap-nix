@@ -53,8 +53,8 @@ in
   };
 
   services.udev.packages = [ pkgs.yubikey-personalization ];
+  services.pcscd.enable = true;
 
-  
   services.xserver = {
     enable = true;
     windowManager.i3.enable = true;
@@ -95,6 +95,7 @@ in
     python312
     nodejs
     git
+    git-lfs
     dig
     ripgrep
     ranger
