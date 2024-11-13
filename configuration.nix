@@ -147,6 +147,7 @@ in
 
   # List services that you want to enable:
   hardware = {
+    enableRedistributableFirmware = true;
     bluetooth = {
       enable = true;
       powerOnBoot = true;
