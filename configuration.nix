@@ -145,6 +145,10 @@ in
     enable = true;
     enableSSHSupport = true;
   };
+  programs.git = {
+    enable = true;
+    lfs.enable = true;
+  };
 
   # List services that you want to enable:
   hardware = {
