@@ -58,7 +58,7 @@ in
   services.xserver = {
     enable = true;
     windowManager.i3.enable = true;
-    desktopManager.gnome.enable = true;
+    desktopManager.gnome.enable = false;
 
     # Configure keymap in X11
     xkb = {
