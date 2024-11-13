@@ -61,10 +61,22 @@ fi
 if [ ! -f ~/.age/github.token ]; then
   echo "Decrypting GitHub token..."
   echo "You will be prompted for your laptop encryption passphrase to decrypt the GitHub token"
-  age --decrypt -o ~/.age/github.token ~/.age/gh-token.encr || {
-    echo "Error: Failed to decrypt GitHub token" >&2
-    exit 1
-  }
+  
+  while true; do
+    if age --decrypt -o ~/.age/github.token ~/.age/gh-token.encr 2>age_error.tmp; then
+      rm age_error.tmp
+      break
+    else
+      error=$(cat age_error.tmp)
+      rm age_error.tmp
+      if echo "$error" | grep -q "incorrect passphrase"; then
+        echo "Error: Incorrect passphrase. Please try again."
+      else
+        echo "Error: Failed to decrypt GitHub token" >&2
+        exit 1
+      fi
+    fi
+  done
 else
   echo "GitHub token already decrypted, skipping..."
 fi
@@ -79,7 +91,7 @@ rm -f ~/.age/github.token 2>/dev/null || true
 
 rm -rf ~/.local/share/chezmoi 2>/dev/null || true
 
-gh repo clone matt-fff/chez-home ~/.local/share/chezmoi || {
+GIT_CLONE_PROTECTION_ACTIVE=false gh repo clone matt-fff/chez-home ~/.local/share/chezmoi || {
   echo "Error: Failed to clone chez-home repository" >&2
   exit 1
 }
