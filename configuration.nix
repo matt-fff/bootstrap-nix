@@ -34,6 +34,14 @@ in
   # Enable networking
   networking.networkmanager.enable = true;
 
+  virtualisation.docker = {
+    enable = true;
+    rootless = {
+      enable = true;
+      setSocketVariable = true;
+    };
+  };
+
   # Set your time zone.
   time.timeZone = "America/Denver";
 
@@ -77,7 +85,7 @@ in
   users.users.matt = {
     isNormalUser = true;
     description = "Matt White";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
     packages = with pkgs; [];
     shell = pkgs.nushell;
   };
