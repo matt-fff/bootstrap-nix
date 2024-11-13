@@ -52,9 +52,13 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
+  services.udev.packages = [ pkgs.yubikey-personalization ];
+
+  
   services.xserver = {
     enable = true;
     windowManager.i3.enable = true;
+    desktopManager.gnome.enable = true;
 
     # Configure keymap in X11
     xkb = {
@@ -62,6 +66,8 @@ in
       variant = "";
     };
   };
+
+  services.gnome.gnome-remote-desktop.enable = true;
 
   services.displayManager = {
     defaultSession = "none+i3";
@@ -96,6 +102,7 @@ in
     fzf
     grc
     packagekit
+    cifs-utils
     lxappearance
     kitty
     mediainfo
@@ -118,6 +125,8 @@ in
     dconf
     lshw
     vim
+    gnome.gnome-remote-desktop
+    gnome.gnome-session
 
     # Unstable packages
     upkg.neovim
@@ -137,8 +146,13 @@ in
   };
 
   # List services that you want to enable:
-  hardware.bluetooth.enable = true; # enables support for Bluetooth
-  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
+  hardware = {
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+    };
+    pulseaudio.enable = false;
+  };
 
   # Enable the OpenSSH daemon.
   services.openssh = {
