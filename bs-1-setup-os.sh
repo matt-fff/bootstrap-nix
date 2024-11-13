@@ -61,14 +61,6 @@ if ! cp "$SCRIPT_DIR/configuration.nix" configuration.nix; then
     exit 1
 fi
 
-# Add graphics configuration import if it exists
-if [ -f graphics-configuration.nix ]; then
-    if ! sed -i '/\.\/luks-configuration.nix/a\      .\/graphics-configuration.nix' configuration.nix; then
-        echo "Failed to add graphics configuration import" 1>&2
-        exit 1
-    fi
-    echo "Added graphics configuration import"
-fi
 
 # Get hostname from command line argument or prompt
 hostname=$1
@@ -82,6 +74,28 @@ if ! sed -i "s/networking.hostName = \"fake-hostname\"/networking.hostName = \"$
     echo "Failed to update hostname in configuration.nix" 1>&2
     exit 1
 fi
+
+# Copy nas-configuration.nix if hostname is not "work"
+if [ "$hostname" != "work" ]; then
+    if ! cp "$SCRIPT_DIR/nas-configuration.nix" nas-configuration.nix; then
+        echo "Failed to copy nas-configuration.nix" 1>&2
+        exit 1
+    fi
+    echo "Copied nas-configuration.nix"
+fi
+
+
+# Add additional configuration imports if they exist
+for config_file in graphics-configuration.nix nas-configuration.nix; do
+    if [ -f "$config_file" ]; then
+        if ! sed -i '/\.\/luks-configuration.nix/a\      \.\/'"$config_file" configuration.nix; then
+            echo "Failed to add $config_file import" 1>&2
+            exit 1
+        fi
+        echo "Added $config_file import"
+    fi
+done
+
 
 # Add nix channel
 echo "Adding nixos-24.05 channel..."
