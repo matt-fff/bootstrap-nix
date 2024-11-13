@@ -2,8 +2,11 @@
 
 ## Grab the script
 ```
+mkdir -p ~/Workspaces/matt-fff/
+cd ~/Workspaces/matt-fff
 nix-shell -p git
 git clone https://github.com/matt-fff/bootstrap-nix
+cd bootstrap-nix
 ```
 
 ## Run the baseline script
