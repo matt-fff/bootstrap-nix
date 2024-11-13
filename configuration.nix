@@ -96,6 +96,7 @@ in
     nodejs
     git
     git-lfs
+    kdiff3
     dig
     ripgrep
     ranger
@@ -125,6 +126,7 @@ in
     gh
     dconf
     lshw
+    pciutils
     vim
     gnome.gnome-remote-desktop
     gnome.gnome-session
