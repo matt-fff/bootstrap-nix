@@ -60,7 +60,10 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  services.udev.packages = [ pkgs.yubikey-personalization ];
+  services.udev.packages = [
+    pkgs.yubikey-personalization
+    pkgs.ledger-udev-rules
+  ];
   services.pcscd.enable = true;
 
   services.xserver = {
@@ -80,6 +83,7 @@ in
   services.displayManager = {
     defaultSession = "none+i3";
   };
+
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.matt = {
