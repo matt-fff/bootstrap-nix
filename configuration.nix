@@ -5,9 +5,6 @@
 { config, pkgs, ... }:
 
 let
-  # TODO make this portable/reproducible
-  i3exit = import /home/matt/.config/nixpkgs/pkgs/i3exit { inherit pkgs; };
-  blurlock = import /home/matt/.config/nixpkgs/pkgs/blurlock { inherit pkgs; };
   upkg = import <nixos-unstable> { inherit pkgs; };
 in
 {
@@ -22,14 +19,6 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "fake-hostname"; # Define your hostname.
- # networking.wireless = {
- #   enable = true;
- #   userControlled.enable = true;
- # };
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -60,36 +49,11 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  services.udev.packages = [
-    pkgs.yubikey-personalization
-    pkgs.ledger-udev-rules
-  ];
-  services.pcscd.enable = true;
-
-  services.xserver = {
-    enable = true;
-    windowManager.i3.enable = true;
-    desktopManager.gnome.enable = false;
-
-    # Configure keymap in X11
-    xkb = {
-      layout = "us";
-      variant = "";
-    };
-  };
-
-  services.gnome.gnome-remote-desktop.enable = true;
-
-  services.displayManager = {
-    defaultSession = "none+i3";
-  };
-
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.matt = {
     isNormalUser = true;
     description = "Matt White";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "video" ];
     packages = with pkgs; [];
     shell = pkgs.nushell;
   };
@@ -110,14 +74,12 @@ in
     git-lfs
     kdiff3
     dig
-    ripgrep
     ranger
     tmux
     fzf
     grc
     packagekit
     cifs-utils
-    lxappearance
     kitty
     mediainfo
     sqlite
@@ -129,7 +91,6 @@ in
     udiskie
     polkit
     polkit_gnome
-    brightnessctl
     networkmanagerapplet
     pavucontrol
     pipewire
@@ -140,21 +101,24 @@ in
     lshw
     pciutils
     vim
+    wofi
+    waybar
+    hyprpaper
+    nwg-displays
     gnome.gnome-remote-desktop
     gnome.gnome-session
 
     # Unstable packages
     upkg.neovim
     upkg.nushell
-
-    # Custom packages
-    blurlock
-    i3exit
   ];
+
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
+  programs.light.enable = true;
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
@@ -162,6 +126,12 @@ in
   programs.git = {
     enable = true;
     lfs.enable = true;
+  };
+  programs.hyprland = {
+    # Install the packages from nixpkgs
+    enable = true;
+    # Whether to enable XWayland
+    xwayland.enable = true;
   };
 
   # List services that you want to enable:
@@ -198,6 +168,7 @@ in
     openFirewall = false;
   };
 
+  services.gnome.gnome-keyring.enable = true;
   services.packagekit.enable = true;
   services.xrdp = {
     enable = true;
@@ -205,44 +176,34 @@ in
     defaultWindowManager = "${pkgs.gnome3.gnome-session}/bin/gnome-session";
   };
 
-  security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-  services.flatpak.enable = true;
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config = {
-      common = {
-        default = [
-          "gtk"
-	      ];
-      };
-    };
+  services.udev.packages = [
+    pkgs.yubikey-personalization
+    pkgs.ledger-udev-rules
+  ];
+  services.pcscd.enable = true;
+  services.gnome.gnome-remote-desktop.enable = true;
+  services.greetd = {                                                      
+    enable = true;                                                         
+    settings = {                                                           
+      default_session = {                                                  
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd hyprland";
+        user = "greeter";                                                  
+      };                                                                   
+    };                                                                     
   };
 
-  systemd.services = {
-    NetworkManager-wait-online.enable = pkgs.lib.mkForce false;
 
-    flatpak-repo = {
-      wantedBy = [ "multi-user.target" ];
-      path = [ pkgs.flatpak ];
-      script = ''
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-      '';
-    };
-  };
+  security.rtkit.enable = true;
+  security.pam.loginLimits = [
+    { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
+  ];
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [ 3389 22 ];
