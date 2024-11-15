@@ -20,6 +20,13 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelModules = [ "nouveau" ];
+  boot.blacklistedKernelModules = [
+    "nvidia"
+    "nvidia_uvm"
+    "nvidia_drm"
+    "nvidia_modeset"
+  ];
 
   networking.hostName = "fake-hostname"; # Define your hostname.
  # networking.wireless = {
@@ -66,17 +73,17 @@ in
   ];
   services.pcscd.enable = true;
 
-  services.xserver = {
-    enable = true;
-    windowManager.i3.enable = true;
-    desktopManager.gnome.enable = false;
+  # services.xserver = {
+  #   enable = true;
+  #   windowManager.i3.enable = true;
+  #   desktopManager.gnome.enable = false;
 
-    # Configure keymap in X11
-    xkb = {
-      layout = "us";
-      variant = "";
-    };
-  };
+  #   # Configure keymap in X11
+  #   xkb = {
+  #     layout = "us";
+  #     variant = "";
+  #   };
+  # };
 
   services.gnome.gnome-remote-desktop.enable = true;
 
@@ -89,7 +96,7 @@ in
   users.users.matt = {
     isNormalUser = true;
     description = "Matt White";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "video" ];
     packages = with pkgs; [];
     shell = pkgs.nushell;
   };
@@ -110,7 +117,6 @@ in
     git-lfs
     kdiff3
     dig
-    ripgrep
     ranger
     tmux
     fzf
@@ -143,6 +149,12 @@ in
     gnome.gnome-remote-desktop
     gnome.gnome-session
 
+    # Sway
+    grim
+    slurp
+    wl-clipboard
+    mako
+
     # Unstable packages
     upkg.neovim
     upkg.nushell
@@ -151,6 +163,39 @@ in
     blurlock
     i3exit
   ];
+
+  # Enable the gnome-keyring secrets vault. 
+  # Will be exposed through DBus to programs willing to store secrets.
+  services.gnome.gnome-keyring.enable = true;
+
+  # enable Sway window manager
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+  };
+  # kanshi systemd service
+  systemd.user.services.kanshi = {
+    description = "kanshi daemon";
+    environment = {
+      WAYLAND_DISPLAY="wayland-1";
+      DISPLAY = ":0";
+    }; 
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = ''${pkgs.kanshi}/bin/kanshi -c kanshi_config_file'';
+    };
+  };
+  services.greetd = {                                                      
+    enable = true;                                                         
+    settings = {                                                           
+      default_session = {                                                  
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd sway";
+        user = "greeter";                                                  
+      };                                                                   
+    };                                                                     
+  };
+  programs.light.enable = true;
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -206,6 +251,10 @@ in
   };
 
   security.rtkit.enable = true;
+  security.pam.loginLimits = [
+    { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
+  ];
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;
