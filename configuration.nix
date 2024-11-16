@@ -207,8 +207,8 @@ in
 
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 3389 4242 22 ];
-    allowedUDPPorts = [ 3389 4242 ];
+    allowedTCPPorts = [ 3389 22 ];
+    allowedUDPPorts = [ 3389 ];
   };
 
   # This value determines the NixOS release from which the default
