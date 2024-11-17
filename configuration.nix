@@ -114,7 +114,11 @@ in
     upkg.nushell
   ];
 
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+  };
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
