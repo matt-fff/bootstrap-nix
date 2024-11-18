@@ -137,6 +137,12 @@ in
     __GL_VRR_ALLOWED = "0";
     WLR_DRM_NO_ATOMIC = "1";
   };
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+    ];
+  };
 
 
   # Some programs need SUID wrappers, can be configured further or are
