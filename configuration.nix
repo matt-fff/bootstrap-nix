@@ -115,10 +115,6 @@ in
     unstable.hyprgui
     unstable.neovim
     unstable.nushell
-
-    #(writeShellScriptBin "hyprland" ''
-    #  exec ${unstable.hyprland}/bin/Hyprland "$@"
-    #'')
   ];
 
   environment.sessionVariables = {
@@ -139,9 +135,7 @@ in
   };
   xdg.portal = {
     enable = true;
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk
-    ];
+    config.common.default = [ "hyprland" ];
   };
 
 
