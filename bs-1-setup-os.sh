@@ -76,13 +76,13 @@ if ! sed -i "s/networking.hostName = \"fake-hostname\"/networking.hostName = \"$
 fi
 
 # Copy nas-configuration.nix if hostname is not "work"
-if [ "$hostname" != "work" ]; then
+# if [ "$hostname" != "work" ]; then
     if ! cp "$SCRIPT_DIR/nas-configuration.nix" nas-configuration.nix; then
         echo "Failed to copy nas-configuration.nix" 1>&2
         exit 1
     fi
     echo "Copied nas-configuration.nix"
-fi
+# fi
 
 
 # Add additional configuration imports if they exist
