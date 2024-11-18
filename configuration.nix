@@ -5,7 +5,10 @@
 { config, pkgs, ... }:
 
 let
-  upkg = import <nixos-unstable> { inherit pkgs; };
+  unstable = import <nixos-unstable> { 
+    config = config.nixpkgs.config;
+    overlays = config.nixpkgs.overlays;
+  };
 in
 {
   imports =
@@ -102,21 +105,37 @@ in
     pciutils
     vim
     wofi
-    waybar
-    hyprpaper
-    nwg-displays
     gnome.gnome-remote-desktop
     gnome.gnome-session
+    waybar
 
     # Unstable packages
-    upkg.hyprgui
-    upkg.neovim
-    upkg.nushell
+    unstable.nwg-displays
+    unstable.hyprpaper
+    unstable.hyprgui
+    unstable.neovim
+    unstable.nushell
+
+    #(writeShellScriptBin "hyprland" ''
+    #  exec ${unstable.hyprland}/bin/Hyprland "$@"
+    #'')
   ];
 
   environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "nvidia";
+    NVD_BACKEND = "direct";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    XDG_SESSION_TYPE = "wayland";
+    XDG_CURRENT_DESKTOP = "Hyprland";
+    XDG_SESSION_DESKTOP = "Hyprland";
     NIXOS_OZONE_WL = "1";
     ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+    
+    # Optional, may help with some apps
+    __GL_GSYNC_ALLOWED = "0";
+    __GL_VRR_ALLOWED = "0";
+    WLR_DRM_NO_ATOMIC = "1";
   };
 
 
@@ -133,10 +152,11 @@ in
     lfs.enable = true;
   };
   programs.hyprland = {
-    # Install the packages from nixpkgs
     enable = true;
-    # Whether to enable XWayland
     xwayland.enable = true;
+    package = unstable.hyprland.override {
+      debug = true;
+    };
   };
 
   # List services that you want to enable:
@@ -197,7 +217,7 @@ in
     enable = true;                                                         
     settings = {                                                           
       default_session = {                                                  
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd hyprland";
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
         user = "greeter";                                                  
       };                                                                   
     };                                                                     
