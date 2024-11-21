@@ -57,3 +57,9 @@ Place your changes in `/etc/nixos/graphics-configuration.nix`. You can either ad
 
 If you're using a laptop, check if it's optimized here:
 https://github.com/NixOS/nixos-hardware
+
+
+## Misc
+### Firefox disable stupid search
+Set keyword.enabled to false in about:config
+

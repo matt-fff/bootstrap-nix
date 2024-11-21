@@ -194,6 +194,13 @@ in
     openFirewall = false;
   };
 
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
+  services.printing.enable = true;
   services.gnome.gnome-keyring.enable = true;
   services.packagekit.enable = true;
   services.xrdp = {
