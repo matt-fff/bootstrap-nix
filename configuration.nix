@@ -32,6 +32,9 @@ in
       enable = true;
       setSocketVariable = true;
     };
+    daemon.settings = {
+      userland-proxy = false;
+    };
   };
 
   # Set your time zone.
@@ -56,7 +59,7 @@ in
   users.users.matt = {
     isNormalUser = true;
     description = "Matt White";
-    extraGroups = [ "networkmanager" "wheel" "docker" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "video" ];
     packages = with pkgs; [];
     shell = pkgs.nushell;
   };
