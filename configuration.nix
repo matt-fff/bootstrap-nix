@@ -26,6 +26,8 @@ in
   # Enable networking
   networking.networkmanager.enable = true;
 
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
   virtualisation.docker = {
     enable = true;
     rootless = {
