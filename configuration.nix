@@ -62,6 +62,7 @@ in
   };
 
   nix.settings.allowed-users = [ "matt" ];
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -183,6 +184,9 @@ in
         KbdInteractiveAuthentication = false;
         PermitRootLogin = "no";
     };
+  };
+  services.udisks2 = {
+    enable = true;
   };
   services.tailscale = {
     enable = true;
