@@ -63,7 +63,7 @@ in
     description = "Matt White";
     extraGroups = [ "networkmanager" "wheel" "video" ];
     packages = with pkgs; [];
-    shell = pkgs.nushell;
+    shell = unstable.nushell;
   };
 
   nix.settings.allowed-users = [ "matt" ];
