@@ -4,6 +4,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+LINUX_TYPE="${LINUX_TYPE:-nix}"
 
 # Create workspace directories
 echo "Creating workspace directories..."
@@ -29,7 +30,7 @@ git clone https://github.com/matt-fff/.chezmoi.git ~/.config/chezmoi || {
   exit 1
 }
 
-if [ "${SKIP_NIX:-false}" != "true" ]; then
+if [ "${LINUX_TYPE}" == "nix" ]; then
   rm -rf ~/.config/nixpkgs 2>/dev/null || true
 
 

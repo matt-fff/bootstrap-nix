@@ -4,9 +4,10 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+LINUX_TYPE="${LINUX_TYPE:-nix}"
 
 
-if [ "${SKIP_NIX:-false}" != "true" ]; then
+if [ "${LINUX_TYPE}" == "nix" ]; then
   rm -rf ~/.config/home-manager 2>/dev/null || true
 
   # Install home-manager
@@ -105,7 +106,7 @@ chezmoi apply --force || {
   exit 1
 }
 
-if [ "${SKIP_NIX:-false}" != "true" ]; then
+if [ "${LINUX_TYPE}" == "nix" ]; then
   echo "Switching home-manager..."
   home-manager switch || {
     echo "Error: Failed to switch home-manager" >&2
