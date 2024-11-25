@@ -5,10 +5,10 @@
 { config, pkgs, ... }:
 
 let
-  # TODO make this portable/reproducible
-  i3exit = import /home/matt/.config/nixpkgs/pkgs/i3exit { inherit pkgs; };
-  blurlock = import /home/matt/.config/nixpkgs/pkgs/blurlock { inherit pkgs; };
-  upkg = import <nixos-unstable> { inherit pkgs; };
+  unstable = import <nixos-unstable> { 
+    config = config.nixpkgs.config;
+    overlays = config.nixpkgs.overlays;
+  };
 in
 {
   imports =
@@ -22,23 +22,20 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "fake-hostname"; # Define your hostname.
- # networking.wireless = {
- #   enable = true;
- #   userControlled.enable = true;
- # };
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
   networking.networkmanager.enable = true;
 
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
   virtualisation.docker = {
     enable = true;
     rootless = {
       enable = true;
       setSocketVariable = true;
+    };
+    daemon.settings = {
+      userland-proxy = false;
     };
   };
 
@@ -60,41 +57,17 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  services.udev.packages = [
-    pkgs.yubikey-personalization
-    pkgs.ledger-udev-rules
-  ];
-  services.pcscd.enable = true;
-
-  services.xserver = {
-    enable = true;
-    windowManager.i3.enable = true;
-    desktopManager.gnome.enable = false;
-
-    # Configure keymap in X11
-    xkb = {
-      layout = "us";
-      variant = "";
-    };
-  };
-
-  services.gnome.gnome-remote-desktop.enable = true;
-
-  services.displayManager = {
-    defaultSession = "none+i3";
-  };
-
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.matt = {
     isNormalUser = true;
     description = "Matt White";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "video" ];
     packages = with pkgs; [];
-    shell = pkgs.nushell;
+    shell = unstable.nushell;
   };
 
   nix.settings.allowed-users = [ "matt" ];
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -110,14 +83,12 @@ in
     git-lfs
     kdiff3
     dig
-    ripgrep
     ranger
     tmux
     fzf
     grc
     packagekit
     cifs-utils
-    lxappearance
     kitty
     mediainfo
     sqlite
@@ -129,7 +100,6 @@ in
     udiskie
     polkit
     polkit_gnome
-    brightnessctl
     networkmanagerapplet
     pavucontrol
     pipewire
@@ -140,21 +110,45 @@ in
     lshw
     pciutils
     vim
+    wofi
     gnome.gnome-remote-desktop
     gnome.gnome-session
+    waybar
 
     # Unstable packages
-    upkg.neovim
-    upkg.nushell
-
-    # Custom packages
-    blurlock
-    i3exit
+    unstable.nwg-displays
+    unstable.hyprpaper
+    unstable.hyprgui
+    unstable.neovim
+    unstable.nushell
   ];
+
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "nvidia";
+    NVD_BACKEND = "direct";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    XDG_SESSION_TYPE = "wayland";
+    XDG_CURRENT_DESKTOP = "Hyprland";
+    XDG_SESSION_DESKTOP = "Hyprland";
+    NIXOS_OZONE_WL = "1";
+    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+    
+    # Optional, may help with some apps
+    __GL_GSYNC_ALLOWED = "0";
+    __GL_VRR_ALLOWED = "0";
+    WLR_DRM_NO_ATOMIC = "1";
+  };
+  xdg.portal = {
+    enable = true;
+    config.common.default = [ "hyprland" ];
+  };
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
+  programs.light.enable = true;
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
@@ -162,6 +156,13 @@ in
   programs.git = {
     enable = true;
     lfs.enable = true;
+  };
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+    package = unstable.hyprland.override {
+      debug = true;
+    };
   };
 
   # List services that you want to enable:
@@ -178,6 +179,7 @@ in
   services.openssh = {
     enable = true;
     ports = [ 22 ];
+    openFirewall = true;
     settings = {
         UseDns = true;
         StrictModes = false;
@@ -187,6 +189,9 @@ in
         KbdInteractiveAuthentication = false;
         PermitRootLogin = "no";
     };
+  };
+  services.udisks2 = {
+    enable = true;
   };
   services.tailscale = {
     enable = true;
@@ -198,6 +203,14 @@ in
     openFirewall = false;
   };
 
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
+  services.printing.enable = true;
+  services.gnome.gnome-keyring.enable = true;
   services.packagekit.enable = true;
   services.xrdp = {
     enable = true;
@@ -205,48 +218,36 @@ in
     defaultWindowManager = "${pkgs.gnome3.gnome-session}/bin/gnome-session";
   };
 
-  security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-  services.flatpak.enable = true;
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config = {
-      common = {
-        default = [
-          "gtk"
-	      ];
-      };
-    };
+  services.udev.packages = [
+    pkgs.yubikey-personalization
+    pkgs.ledger-udev-rules
+  ];
+  services.pcscd.enable = true;
+  services.gnome.gnome-remote-desktop.enable = true;
+  services.greetd = {                                                      
+    enable = true;                                                         
+    settings = {                                                           
+      default_session = {                                                  
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+        user = "greeter";                                                  
+      };                                                                   
+    };                                                                     
   };
 
-  systemd.services = {
-    NetworkManager-wait-online.enable = pkgs.lib.mkForce false;
 
-    flatpak-repo = {
-      wantedBy = [ "multi-user.target" ];
-      path = [ pkgs.flatpak ];
-      script = ''
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-      '';
-    };
-  };
+  security.rtkit.enable = true;
+  security.pam.loginLimits = [
+    { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
+  ];
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 3389 22 ];
-    allowedUDPPorts = [ 3389 ];
   };
 
   # This value determines the NixOS release from which the default

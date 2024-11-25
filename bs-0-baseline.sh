@@ -29,13 +29,16 @@ git clone https://github.com/matt-fff/.chezmoi.git ~/.config/chezmoi || {
   exit 1
 }
 
-rm -rf ~/.config/nixpkgs 2>/dev/null || true
+if [ "${SKIP_NIX:-false}" != "true" ]; then
+  rm -rf ~/.config/nixpkgs 2>/dev/null || true
 
-echo "Cloning nixpkgs repository..."
-git clone https://github.com/matt-fff/my-nixpkgs.git ~/.config/nixpkgs || {
-  echo "Error: Failed to clone nixpkgs repository" >&2
-  exit 1
-}
+
+  echo "Cloning nixpkgs repository..."
+  git clone https://github.com/matt-fff/my-nixpkgs.git ~/.config/nixpkgs || {
+    echo "Error: Failed to clone nixpkgs repository" >&2
+    exit 1
+  }
+fi
 
 cd "$SCRIPT_DIR" || {
   echo "Error: Failed to change to script directory" >&2

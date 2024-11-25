@@ -11,9 +11,12 @@ rm -f ~/.age/github.token 2>/dev/null || true
 # Set the remote URLs for the repositories
 echo "Fixing remote URLs for the repositories to use SSH..."
 git -C ~/.config/chezmoi remote set-url origin git@github.com:matt-fff/.chezmoi.git
-git -C ~/.config/nixpkgs remote set-url origin git@github.com:matt-fff/my-nixpkgs.git
 git -C ~/.local/share/chezmoi remote set-url origin git@github.com:matt-fff/chez-home.git
 git -C ~/Workspaces/matt-fff/bootstrap-nix remote set-url origin git@github.com:matt-fff/bootstrap-nix.git
+
+if [ "${SKIP_NIX:-false}" != "true" ]; then
+  git -C ~/.config/nixpkgs remote set-url origin git@github.com:matt-fff/my-nixpkgs.git
+fi
 
 echo "Cloning additional repositories..."
 
