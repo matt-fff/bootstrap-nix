@@ -5,13 +5,16 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-rm -rf ~/.config/home-manager 2>/dev/null || true
 
-# Install home-manager
-echo "Installing home-manager..."
-if ! nix-shell '<home-manager>' -A install; then
-    echo "Failed to install home-manager" 1>&2
-    exit 1
+if [ "${SKIP_NIX:-false}" != "true" ]; then
+  rm -rf ~/.config/home-manager 2>/dev/null || true
+
+  # Install home-manager
+  echo "Installing home-manager..."
+  if ! nix-shell '<home-manager>' -A install; then
+      echo "Failed to install home-manager" 1>&2
+      exit 1
+  fi
 fi
 
 # Create .age directory
@@ -102,11 +105,13 @@ chezmoi apply --force || {
   exit 1
 }
 
-echo "Switching home-manager..."
-home-manager switch || {
-  echo "Error: Failed to switch home-manager" >&2
-  exit 1
-}
+if [ "${SKIP_NIX:-false}" != "true" ]; then
+  echo "Switching home-manager..."
+  home-manager switch || {
+    echo "Error: Failed to switch home-manager" >&2
+    exit 1
+  }
+fi
 
 cd "$SCRIPT_DIR" || {
   echo "Error: Failed to change to script directory" >&2
