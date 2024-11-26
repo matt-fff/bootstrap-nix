@@ -165,14 +165,17 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     
     # Check if ASDF config already exists before adding it
     if [ ! -f /home/matt/.config/nushell/env.nu ] || ! grep -q "ASDF_DIR = '/opt/asdf-vm/'" /home/matt/.config/nushell/env.nu; then
-        echo "\n$env.ASDF_DIR = '/opt/asdf-vm/'\n source /opt/asdf-vm/asdf.nu" >> /home/matt/.config/nushell/env.nu
+        echo "" >> /home/matt/.config/nushell/env.nu
+        echo "\$env.ASDF_DIR = '/opt/asdf-vm/'" >> /home/matt/.config/nushell/env.nu
+        echo "source /opt/asdf-vm/asdf.nu" >> /home/matt/.config/nushell/env.nu
+        echo "" >> /home/matt/.config/nushell/env.nu
         chown matt: /home/matt/.config/nushell/env.nu
     fi
 
     echo "Handling docker nonsense..."
     groupadd docker || true
-    usermod -aG docker $USER
-    newgrp docker
+    usermod -aG docker $USER || true
+    newgrp docker || true
 
     echo "Updating shell"
     usermod --shell /usr/bin/nu matt || {
