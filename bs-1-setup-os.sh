@@ -162,14 +162,14 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     git clone https://aur.archlinux.org/asdf-vm.git /tmp/asdf-vm && cd /tmp/asdf-vm && makepkg -si
     
     # Check if ASDF config already exists before adding it
-    if ! grep -q "ASDF_DIR = '/opt/asdf-vm/'" /home/matt/.config/nushell/env.nu; then
+    if [ ! -f /home/matt/.config/nushell/env.nu ] || ! grep -q "ASDF_DIR = '/opt/asdf-vm/'" /home/matt/.config/nushell/env.nu; then
         echo "\n$env.ASDF_DIR = '/opt/asdf-vm/'\n source /opt/asdf-vm/asdf.nu" >> /home/matt/.config/nushell/env.nu
         chown matt: /home/matt/.config/nushell/env.nu
     fi
 
     echo "Handling docker nonsense..."
-    sudo groupadd docker
-    sudo usermod -aG docker $USER
+    groupadd docker || true
+    usermod -aG docker $USER
     newgrp docker
 
     echo "Updating shell"
