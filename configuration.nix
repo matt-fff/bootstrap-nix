@@ -160,9 +160,7 @@ in
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    package = unstable.hyprland.override {
-      debug = true;
-    };
+    package = unstable.hyprland;
   };
 
   # List services that you want to enable:
@@ -209,7 +207,6 @@ in
     openFirewall = true;
   };
 
-  services.printing.enable = true;
   services.gnome.gnome-keyring.enable = true;
   services.packagekit.enable = true;
   services.xrdp = {

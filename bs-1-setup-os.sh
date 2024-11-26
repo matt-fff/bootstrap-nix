@@ -88,7 +88,7 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
 
 
     # Add additional configuration imports if they exist
-    for config_file in graphics-configuration.nix nas-configuration.nix; do
+    for config_file in graphics-configuration.nix nas-configuration.nix network-configuration.nix; do
         if [ -f "$config_file" ]; then
             if ! sed -i '/\.\/luks-configuration.nix/a\      \.\/'"$config_file" configuration.nix; then
                 echo "Failed to add $config_file import" 1>&2
@@ -157,7 +157,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         jq \
         pulumi \
         docker \
-        docker-compose
+        docker-compose \
+        ttf-sharetech-mono-nerd
 
     if [ ! -d /tmp/asdf-vm ]; then
         git clone https://aur.archlinux.org/asdf-vm.git /tmp/asdf-vm && cd /tmp/asdf-vm && makepkg -si
