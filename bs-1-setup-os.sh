@@ -159,7 +159,9 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         docker \
         docker-compose
 
-    git clone https://aur.archlinux.org/asdf-vm.git /tmp/asdf-vm && cd /tmp/asdf-vm && makepkg -si
+    if [ ! -d /tmp/asdf-vm ]; then
+        git clone https://aur.archlinux.org/asdf-vm.git /tmp/asdf-vm && cd /tmp/asdf-vm && makepkg -si
+    fi
     
     # Check if ASDF config already exists before adding it
     if [ ! -f /home/matt/.config/nushell/env.nu ] || ! grep -q "ASDF_DIR = '/opt/asdf-vm/'" /home/matt/.config/nushell/env.nu; then
