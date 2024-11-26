@@ -139,7 +139,7 @@ fi
 
 if [ "${LINUX_TYPE}" == "arch" ]; then
     echo "Installing dependencies"
-    pacman -Sy \
+    pacman -Sy --noconfirm \
         curl \
         git \
         age \
@@ -173,7 +173,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     fi
 
     echo "Handling docker nonsense..."
-    groupadd docker || true
+    getent group docker >/dev/null 2>&1 || groupadd docker
     usermod -aG docker $USER || true
     newgrp docker || true
 
