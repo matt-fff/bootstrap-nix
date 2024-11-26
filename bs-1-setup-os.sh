@@ -138,7 +138,45 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
 fi
 
 if [ "${LINUX_TYPE}" == "arch" ]; then
-    pacman -Sy age github-cli
+    echo "Installing dependencies"
+    pacman -Sy \
+        curl \
+        git \
+        age \
+        github-cli \
+        chezmoi \
+        tmux \
+        kitty \
+        starship \
+        nushell \
+        atuin \
+        zoxide \
+        pnpm \
+        python-pynvim \
+        uv \
+        jq \
+        pulumi \
+        docker \
+        docker-compose
+
+    git clone https://aur.archlinux.org/asdf-vm.git /tmp/asdf-vm && cd /tmp/asdf-vm && makepkg -si
+    
+    # Check if ASDF config already exists before adding it
+    if ! grep -q "ASDF_DIR = '/opt/asdf-vm/'" /home/matt/.config/nushell/env.nu; then
+        echo "\n$env.ASDF_DIR = '/opt/asdf-vm/'\n source /opt/asdf-vm/asdf.nu" >> /home/matt/.config/nushell/env.nu
+        chown matt: /home/matt/.config/nushell/env.nu
+    fi
+
+    echo "Handling docker nonsense..."
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    newgrp docker
+
+    echo "Updating shell"
+    usermod --shell /usr/bin/nu matt || {
+        echo "Error: Failed to update shell" >&2
+        exit 1
+    }
 fi
 
 cd "$SCRIPT_DIR" || {
