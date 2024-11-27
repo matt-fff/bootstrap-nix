@@ -4,6 +4,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+LINUX_TYPE="${LINUX_TYPE:-nix}"
 
 # Just in case it was left over from a previous run
 rm -f ~/.age/github.token 2>/dev/null || true
@@ -14,9 +15,25 @@ git -C ~/.config/chezmoi remote set-url origin git@github.com:matt-fff/.chezmoi.
 git -C ~/.local/share/chezmoi remote set-url origin git@github.com:matt-fff/chez-home.git
 git -C ~/Workspaces/matt-fff/bootstrap-nix remote set-url origin git@github.com:matt-fff/bootstrap-nix.git
 
-if [ "${SKIP_NIX:-false}" != "true" ]; then
+if [ "${LINUX_TYPE}" == "nix" ]; then
   git -C ~/.config/nixpkgs remote set-url origin git@github.com:matt-fff/my-nixpkgs.git
 fi
+
+if [ "${LINUX_TYPE}" == "arch" ]; then
+  yay -Sy --noconfirm --sudoloop \
+    asdf-vm \
+    sapling-scm-bin
+
+    # Check if ASDF config already exists before adding it
+    if [ ! -f ~/.config/nushell/env.nu ] || ! grep -q "ASDF_DIR = '/opt/asdf-vm/'" ~/.config/nushell/env.nu; then
+        echo "" >> ~/.config/nushell/env.nu
+        echo "\$env.ASDF_DIR = '/opt/asdf-vm/'" >> ~/.config/nushell/env.nu
+        echo "source /opt/asdf-vm/asdf.nu" >> ~/.config/nushell/env.nu
+        echo "" >> ~/.config/nushell/env.nu
+    fi
+fi
+
+
 
 echo "Cloning additional repositories..."
 

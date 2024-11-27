@@ -160,19 +160,6 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         docker-compose \
         ttf-sharetech-mono-nerd
 
-    if [ ! -d /tmp/asdf-vm ]; then
-        git clone https://aur.archlinux.org/asdf-vm.git /tmp/asdf-vm && cd /tmp/asdf-vm && makepkg -si
-    fi
-    
-    # Check if ASDF config already exists before adding it
-    if [ ! -f /home/matt/.config/nushell/env.nu ] || ! grep -q "ASDF_DIR = '/opt/asdf-vm/'" /home/matt/.config/nushell/env.nu; then
-        echo "" >> /home/matt/.config/nushell/env.nu
-        echo "\$env.ASDF_DIR = '/opt/asdf-vm/'" >> /home/matt/.config/nushell/env.nu
-        echo "source /opt/asdf-vm/asdf.nu" >> /home/matt/.config/nushell/env.nu
-        echo "" >> /home/matt/.config/nushell/env.nu
-        chown matt: /home/matt/.config/nushell/env.nu
-    fi
-
     echo "Handling docker nonsense..."
     getent group docker >/dev/null 2>&1 || groupadd docker
     usermod -aG docker $USER || true
