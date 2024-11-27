@@ -19,19 +19,6 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
   git -C ~/.config/nixpkgs remote set-url origin git@github.com:matt-fff/my-nixpkgs.git
 fi
 
-if [ "${LINUX_TYPE}" == "arch" ]; then
-  yay -Sy --noconfirm --sudoloop \
-    asdf-vm \
-    sapling-scm-bin
-
-    # Check if ASDF config already exists before adding it
-    if [ ! -f ~/.config/nushell/env.nu ] || ! grep -q "ASDF_DIR = '/opt/asdf-vm/'" ~/.config/nushell/env.nu; then
-        echo "" >> ~/.config/nushell/env.nu
-        echo "\$env.ASDF_DIR = '/opt/asdf-vm/'" >> ~/.config/nushell/env.nu
-        echo "source /opt/asdf-vm/asdf.nu" >> ~/.config/nushell/env.nu
-        echo "" >> ~/.config/nushell/env.nu
-    fi
-fi
 
 
 
@@ -83,6 +70,28 @@ if [ ! -L "$bladegen_link" ]; then
     ln -s ~/.local/share/OpenSCAD/libraries/bladegen-lib/libraries/bladegen "$bladegen_link"
 else
     echo "Symlink already exists: $bladegen_link"
+fi
+
+if [ "${LINUX_TYPE}" == "arch" ]; then
+  yay -Sy --noconfirm --sudoloop \
+    asdf-vm \
+    sapling-scm-bin \
+    xrdp
+
+  sudo systemctl enable --now xrdp
+
+  # Check if ASDF config already exists before adding it to the shell
+  if [ ! -f ~/.config/nushell/env.nu ] || ! grep -q "ASDF_DIR =" ~/.config/nushell/env.nu; then
+    echo "" >> ~/.config/nushell/env.nu
+    echo "\$env.ASDF_DIR = '/opt/asdf-vm/'" >> ~/.config/nushell/env.nu
+    echo "source /opt/asdf-vm/asdf.nu" >> ~/.config/nushell/env.nu
+    echo "" >> ~/.config/nushell/env.nu
+  fi
+
+  for plugin in uv pnpm nodejs pulumi gleam zig gcloud; do
+    asdf plugin add "$plugin"
+  done
+  asdf install
 fi
 
 cd "$SCRIPT_DIR" || {

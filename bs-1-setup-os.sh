@@ -140,6 +140,7 @@ fi
 if [ "${LINUX_TYPE}" == "arch" ]; then
     echo "Installing dependencies"
     pacman -Sy --noconfirm \
+        tailscale \
         curl \
         git \
         age \
@@ -151,14 +152,18 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         nushell \
         atuin \
         zoxide \
-        pnpm \
+        neovim \
         python-pynvim \
-        uv \
         jq \
-        pulumi \
         docker \
         docker-compose \
+        gnome-remote-desktop \
         ttf-sharetech-mono-nerd
+
+    systemctl enable --now gnome-remote-desktop
+    systemctl enable --now tailscaled
+    systemctl enable --now docker
+    tailscale up --ssh
 
     echo "Handling docker nonsense..."
     getent group docker >/dev/null 2>&1 || groupadd docker
