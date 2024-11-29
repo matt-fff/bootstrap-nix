@@ -83,7 +83,6 @@ in
     git-lfs
     kdiff3
     dig
-    ranger
     tmux
     fzf
     grc
@@ -92,9 +91,6 @@ in
     kitty
     mediainfo
     sqlite
-    lightdm
-    lightdm-slick-greeter
-    nitrogen
     bluez
     blueberry
     udiskie
