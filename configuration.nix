@@ -107,14 +107,8 @@ in
     pciutils
     vim
     wofi
-    gnome.gnome-remote-desktop
-    gnome.gnome-session
 
     # Unstable packages
-    unstable.waybar
-    unstable.nwg-displays
-    unstable.hyprpaper
-    unstable.hyprgui
     unstable.neovim
     unstable.nushell
   ];
