@@ -109,9 +109,9 @@ in
     wofi
     gnome.gnome-remote-desktop
     gnome.gnome-session
-    waybar
 
     # Unstable packages
+    unstable.waybar
     unstable.nwg-displays
     unstable.hyprpaper
     unstable.hyprgui
