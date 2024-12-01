@@ -9,6 +9,7 @@ let
     config = config.nixpkgs.config;
     overlays = config.nixpkgs.overlays;
   };
+  customPkgs = import ~/.config/nixpkgs/pkgs { inherit pkgs; inherit unstable; };
 in
 {
   imports =
@@ -150,7 +151,7 @@ in
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    package = unstable.hyprland;
+    package = customPkgs.hyprland;
   };
 
   # List services that you want to enable:
