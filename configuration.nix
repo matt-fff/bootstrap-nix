@@ -9,7 +9,6 @@ let
     config = config.nixpkgs.config;
     overlays = config.nixpkgs.overlays;
   };
-  customPkgs = import ~/.config/nixpkgs/pkgs { inherit pkgs; inherit unstable; };
 in
 {
   imports =
@@ -114,6 +113,10 @@ in
     unstable.nushell
   ];
 
+  fonts.packages = [
+    unstable.nerd-fonts.shure-tech-mono
+  ];
+
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "nvidia";
     NVD_BACKEND = "direct";
@@ -151,7 +154,7 @@ in
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    package = customPkgs.hyprland;
+    package = unstable.hyprland;
   };
 
   # List services that you want to enable:
@@ -244,6 +247,6 @@ in
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
 
 }
