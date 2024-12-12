@@ -1,0 +1,6 @@
+# Basically we ignore the materialized version of every template
+home-manager/flake.nix
+home-manager/home.nix
+home-manager/packages.nix
+configuration.nix
+flake.nix

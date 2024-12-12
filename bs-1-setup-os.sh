@@ -19,6 +19,32 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
         exit 1
     }
 
+    mkdir -p home-manager
+
+    # Get hostname from command line argument or prompt
+    export HOSTNAME=$1
+    if [ -z "$HOSTNAME" ]; then
+        echo -n "Enter hostname (default: newnix): "
+        read -r hostname
+        export HOSTNAME=${HOSTNAME:-newnix}
+    fi
+
+    # Source environment file based on hostname
+    if [ -f "${SCRIPT_DIR}/envs/${HOSTNAME}.sh" ]; then
+        . "${SCRIPT_DIR}/envs/${HOSTNAME}.sh"
+    else
+        . "${SCRIPT_DIR}/envs/default.sh"
+    fi
+
+    echo "Processing templates..."
+    # Process the template
+    nix-shell -p gettext --run "envsubst < \"${SCRIPT_DIR}/home-manager/packages.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/packages.nix\"
+                                envsubst < \"${SCRIPT_DIR}/home-manager/home.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/home.nix\"
+                                envsubst < \"${SCRIPT_DIR}/configuration.nix.tmpl\" > \"${SCRIPT_DIR}/configuration.nix\"
+                                envsubst < \"${SCRIPT_DIR}/flake.nix.tmpl\" > \"${SCRIPT_DIR}/flake.nix\"
+                                "
+    echo "Templates processed"
+
     # Create backup if it doesn't exist
     if [ ! -f configuration.nix ]; then
         echo "configuration.nix not found" 1>&2
@@ -64,19 +90,6 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     fi
 
 
-    # Get hostname from command line argument or prompt
-    hostname=$1
-    if [ -z "$hostname" ]; then
-        echo -n "Enter hostname (default: newnix): "
-        read -r hostname
-        hostname=${hostname:-newnix}
-    fi
-
-    if ! sed -i "s/networking.hostName = \"fake-hostname\"/networking.hostName = \"$hostname\"/" configuration.nix; then
-        echo "Failed to update hostname in configuration.nix" 1>&2
-        exit 1
-    fi
-
     # Copy nas-configuration.nix if hostname is not "work"
     # if [ "$hostname" != "work" ]; then
         if ! cp "$SCRIPT_DIR/nas-configuration.nix" nas-configuration.nix; then
@@ -90,7 +103,7 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     # Add additional configuration imports if they exist
     for config_file in graphics-configuration.nix nas-configuration.nix network-configuration.nix; do
         if [ -f "$config_file" ]; then
-            if ! sed -i '/\.\/luks-configuration.nix/a\      \.\/'"$config_file" configuration.nix; then
+            if ! sed -i '/\.\/luks-configuration.nix/a\          '"\.\/$config_file" ${SCRIPT_DIR}/flake.nix; then
                 echo "Failed to add $config_file import" 1>&2
                 exit 1
             fi
@@ -98,35 +111,11 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
         fi
     done
 
+    cp -f "${SCRIPT_DIR}/flake.nix" flake.nix
+    echo "Copied flake.nix"
 
-    # Add nix channel
-    echo "Adding nixos-24.05 channel..."
-    nix-channel --add https://nixos.org/channels/nixos-24.05 nixos || {
-    echo "Error: Failed to add nixos-24.05 channel" >&2
-    exit 1
-    }
-
-    # Add nix channel
-    echo "Adding nixos-unstable channel..."
-    nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable || {
-    echo "Error: Failed to add nixos-unstable channel" >&2
-    exit 1
-    }
-
-    # Add home-manager channel
-    echo "Adding home-manager channel..."
-    nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager || {
-    echo "Error: Failed to add home-manager channel" >&2
-    exit 1
-    }
-
-    # Update nix channels
-    echo "Updating nix channels..."
-    nix-channel --update || {
-    echo "Error: Failed to update nix channels" >&2
-    exit 1
-    }
-
+    cp -f "${SCRIPT_DIR}/home-manager/"*.nix /etc/nixos/home-manager/
+    echo "Copied home-manager files"
 
     # Rebuild NixOS configuration
     if ! nixos-rebuild switch --upgrade; then
@@ -167,11 +156,11 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
 
     echo "Handling docker nonsense..."
     getent group docker >/dev/null 2>&1 || groupadd docker
-    usermod -aG docker $USER || true
+    usermod -aG docker $NIXUSER || true
     newgrp docker || true
 
     echo "Updating shell"
-    usermod --shell /usr/bin/nu matt || {
+    usermod --shell /usr/bin/nu $NIXUSER || {
         echo "Error: Failed to update shell" >&2
         exit 1
     }

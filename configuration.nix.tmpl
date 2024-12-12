@@ -9,7 +9,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "work"; # Define your hostname.
+  networking.hostName = "${HOSTNAME}"; # Define your hostname.
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -46,15 +46,15 @@
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.matt = {
+  users.users.${NIXUSER} = {
     isNormalUser = true;
-    description = "matt";
+    description = "${NIXUSER}";
     extraGroups = [ "networkmanager" "wheel" "video" ];
     packages = with pkgs; [];
     shell = pkgs.nushell;
   };
 
-  nix.settings.allowed-users = [ "matt" ];
+  nix.settings.allowed-users = [ "${NIXUSER}" ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Allow unfree packages
@@ -170,7 +170,7 @@
         UseDns = true;
         StrictModes = false;
         X11Forwarding = false;
-        AllowUsers = [ "matt" ];
+        AllowUsers = [ "${NIXUSER}" ];
         PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;
         PermitRootLogin = "no";

@@ -31,6 +31,7 @@ git clone https://github.com/matt-fff/.chezmoi.git ~/.config/chezmoi || {
 }
 
 if [ "${LINUX_TYPE}" == "nix" ]; then
+  # TODO This will break if the user isn't matched to the NIXUSER
   rm -rf ~/.config/nixpkgs 2>/dev/null || true
 
 
