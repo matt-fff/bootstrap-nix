@@ -6,17 +6,23 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LINUX_TYPE="${LINUX_TYPE:-nix}"
 
+# Create workspace directories
+echo "Creating workspace directories..."
+echo "oss matt-fff scratch" \
+  | sed 's/ /\n/g' \
+  | xargs -I{} mkdir -p ~/Workspaces/{} || {
+    echo "Error: Failed to create workspace directories" >&2
+    exit 1
+  }
 
-if [ "${LINUX_TYPE}" == "nix" ]; then
-  rm -rf ~/.config/home-manager 2>/dev/null || true
+rm -rf ~/.config/chezmoi 2>/dev/null || true
 
-  # Install home-manager
-  echo "Installing home-manager..."
-  if ! nix-shell '<home-manager>' -A install; then
-      echo "Failed to install home-manager" 1>&2
-      exit 1
-  fi
-fi
+# Clone repositories
+echo "Cloning dotfiles repository..."
+git clone https://github.com/matt-fff/.chezmoi.git ~/.config/chezmoi || {
+  echo "Error: Failed to clone chezmoi repository" >&2
+  exit 1
+}
 
 # Create .age directory
 echo "Creating .age directory..."

@@ -12,6 +12,9 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
+########################################################
+# NixOS
+########################################################
 if [ "${LINUX_TYPE}" == "nix" ]; then
     # Check if we can access /etc/nixos
     cd /etc/nixos || {
@@ -103,7 +106,26 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     # Add additional configuration imports if they exist
     for config_file in graphics-configuration.nix nas-configuration.nix network-configuration.nix; do
         if [ -f "$config_file" ]; then
-            if ! sed -i '/\.\/luks-configuration.nix/a\          '"\.\/$config_file" ${SCRIPT_DIR}/flake.nix; then
+            config_import="\.\/$config_file"
+            # Check if first line contains unstable or customPkgs
+            inherits=""
+            should_wrap_import=false
+            for item in "pkgs" "unstable" "custom"; do
+                if grep -q "$item" "$config_file" 2>/dev/null; then
+                    inherits="${inherits}inherit ${item}; "
+                    if [ "$item" != "pkgs" ]; then
+                        should_wrap_import=true
+                    fi
+                fi
+            done
+            inherits="${inherits% }" # Remove trailing space
+
+            if $should_wrap_import; then
+                echo "Wrapping $config_file import with { $inherits }"
+                config_import="(import $config_import { $inherits })"
+            fi
+
+            if ! sed -i '/\.\/luks-configuration.nix/a\          '"$config_import" ${SCRIPT_DIR}/flake.nix; then
                 echo "Failed to add $config_file import" 1>&2
                 exit 1
             fi
@@ -126,6 +148,10 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     echo "Successfully completed NixOS configuration update"
 fi
 
+
+########################################################
+# Arch Linux
+########################################################
 if [ "${LINUX_TYPE}" == "arch" ]; then
     echo "Installing dependencies"
     pacman -Sy --noconfirm \

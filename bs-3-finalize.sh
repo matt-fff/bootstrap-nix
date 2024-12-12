@@ -15,17 +15,10 @@ git -C ~/.config/chezmoi remote set-url origin git@github.com:matt-fff/.chezmoi.
 git -C ~/.local/share/chezmoi remote set-url origin git@github.com:matt-fff/chez-home.git
 git -C ~/Workspaces/matt-fff/bootstrap-nix remote set-url origin git@github.com:matt-fff/bootstrap-nix.git
 
-if [ "${LINUX_TYPE}" == "nix" ]; then
-  git -C ~/.config/nixpkgs remote set-url origin git@github.com:matt-fff/my-nixpkgs.git
-fi
-
-
-
-
 echo "Cloning additional repositories..."
 
 # Clone workspaces repositories
-for repo in "deepthought" "cutter-templates" "i3blocks-contrib"; do
+for repo in "deepthought" "cutter-templates"; do
     target_dir="$HOME/Workspaces/matt-fff/$repo"
     if [ ! -d "$target_dir" ]; then
         git clone "git@github.com:matt-fff/$repo.git" "$target_dir"
@@ -33,14 +26,6 @@ for repo in "deepthought" "cutter-templates" "i3blocks-contrib"; do
         echo "Directory already exists: $target_dir"
     fi
 done
-
-repo="i3blocks-contrib"
-target_dir="$HOME/Workspaces/oss/$repo"
-if [ ! -d "$target_dir" ]; then
-    git clone "git@github.com:matt-fff/$repo.git" "$target_dir"
-else
-    echo "Directory already exists: $target_dir"
-fi
 
 # Create OpenSCAD libraries directory
 mkdir -p ~/.local/share/OpenSCAD/libraries

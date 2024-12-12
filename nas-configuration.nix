@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ pkgs, ... }:
 
 {
   fileSystems."/mnt/doomnas/Library" =

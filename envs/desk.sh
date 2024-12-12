@@ -2,4 +2,4 @@
 
 export NIXUSER="${NIXUSER:-matt}"
 export HOSTNAME="${HOSTNAME:-newnix}"
-export EXTRA_PACKAGES="nixpkgs.monero-gui nixpkgs.monero-cli nixpkgs.ledger-live-desktop nixpkgs.wally-cli"
+export EXTRA_PACKAGES="pkgs.monero-gui pkgs.monero-cli pkgs.ledger-live-desktop pkgs.wally-cli"

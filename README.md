@@ -9,12 +9,7 @@ git clone https://github.com/matt-fff/bootstrap-nix
 cd bootstrap-nix
 ```
 
-## Run the baseline script
-```
-./bs-0-baseline.sh
-```
-
-## Run the script to update the Nix OS configuration
+## Run the script to setup the OS
 ```
 su -c './bs-1-setup-os.sh desired-hostname'
 ```
