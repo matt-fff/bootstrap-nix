@@ -112,14 +112,6 @@ chezmoi apply --force || {
   exit 1
 }
 
-if [ "${LINUX_TYPE}" == "nix" ]; then
-  echo "Switching home-manager..."
-  home-manager switch || {
-    echo "Error: Failed to switch home-manager" >&2
-    exit 1
-  }
-fi
-
 cd "$SCRIPT_DIR" || {
   echo "Error: Failed to change to script directory" >&2
   exit 1
