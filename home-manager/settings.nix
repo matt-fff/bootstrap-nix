@@ -19,16 +19,16 @@
         "application/x-extension-shtml" = "url-router.desktop";
         "application/rss+xml" = "url-router.desktop";
 
-        "application/pdf" = "chromium.desktop";
+        "application/pdf" = "url-router.desktop";
         "text/calendar" = "morgen.desktop";
         "application/octet-stream" = "vlc.desktop";
         "inode/directory" = "nautilus.desktop";
         "image/jpeg" = "nomacs.desktop";
         "image/png" = "nomacs.desktop";
-        "x-scheme-handler/mailto" = "dx-bluemail.desktop";
-        "message/rfc822" = "dx-bluemail.desktop";
-        "application/x-extension-eml" = "dx-bluemail.desktop";
-        "application/x-extension-msg" = "dx-bluemail.desktop";
+        "x-scheme-handler/mailto" = "thunderbird.desktop";
+        "message/rfc822" = "thunderbird.desktop";
+        "application/x-extension-eml" = "thunderbird.desktop";
+        "application/x-extension-msg" = "thunderbird.desktop";
       };
     };
     desktopEntries = {
