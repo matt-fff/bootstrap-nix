@@ -35,20 +35,10 @@
       url-router = {
         name = "DxBrowser";
         genericName = "Browser";
-        exec = "/home/matt/.local/bin/url-router.sh";
+        exec = "/home/matt/.local/bin/url-router.sh %U";
         icon = "/home/matt/MEGA/Images/icons/globe-solid.svg";
         comment = "Open URLs in the right browser";
         categories = [ "WebBrowser" ];
-        type = "Application";
-      };
-      dx-bluemail = {
-        name = "DxBlueMail";
-        genericName = "Email Reader";
-        exec = "bluemail --disable-gpu-sandbox";
-        icon = "bluemail";
-        comment = "Free, secure, universal email app, capable of managing an unlimited number of mail accounts";
-        categories = [ "Office" ];
-        mimeType = [ "x-scheme-handler/me.blueone.linux" "x-scheme-handler/mailto" ];
         type = "Application";
       };
     };
