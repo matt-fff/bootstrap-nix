@@ -4,3 +4,4 @@ home-manager/home.nix
 home-manager/packages.nix
 configuration.nix
 flake.nix
+result
