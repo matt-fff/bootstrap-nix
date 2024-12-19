@@ -32,11 +32,12 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
         export HOSTNAME=${HOSTNAME:-newnix}
     fi
 
-    # Source environment file based on hostname
+    # Always source the default environment
+    . "${SCRIPT_DIR}/envs/default.sh"
+
+    # Source environment overrides based on hostname
     if [ -f "${SCRIPT_DIR}/envs/${HOSTNAME}.sh" ]; then
         . "${SCRIPT_DIR}/envs/${HOSTNAME}.sh"
-    else
-        . "${SCRIPT_DIR}/envs/default.sh"
     fi
 
     echo "Processing templates..."
