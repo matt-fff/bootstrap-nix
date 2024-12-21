@@ -2,6 +2,8 @@
 home-manager/flake.nix
 home-manager/home.nix
 home-manager/packages.nix
+home-manager/shell.nix
+home-manager/settings.nix
 configuration.nix
 flake.nix
 result

@@ -44,6 +44,8 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     # Process the template
     nix-shell -p gettext --run "envsubst < \"${SCRIPT_DIR}/home-manager/packages.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/packages.nix\"
                                 envsubst < \"${SCRIPT_DIR}/home-manager/home.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/home.nix\"
+                                envsubst < \"${SCRIPT_DIR}/home-manager/shell.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/shell.nix\"
+                                envsubst < \"${SCRIPT_DIR}/home-manager/settings.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/settings.nix\"
                                 envsubst < \"${SCRIPT_DIR}/configuration.nix.tmpl\" > \"${SCRIPT_DIR}/configuration.nix\"
                                 envsubst < \"${SCRIPT_DIR}/flake.nix.tmpl\" > \"${SCRIPT_DIR}/flake.nix\"
                                 "

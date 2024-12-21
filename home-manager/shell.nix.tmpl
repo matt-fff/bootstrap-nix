@@ -15,13 +15,14 @@
   #
   # or
   #
-  #  /etc/profiles/per-user/matt/etc/profile.d/hm-session-vars.sh
+  #  /etc/profiles/per-user/${NIXUSER}/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
-    BROWSER = "url-router";
-    DEFAULT_BROWSER = "url-router";
+    BROWSER = "/home/${NIXUSER}/.local/bin/url-router.sh";
+    DEFAULT_BROWSER = "/home/${NIXUSER}/.local/bin/url-router.sh";
+    NB_BROWSER = "firefox";
   };
 
   programs.nushell = {
@@ -29,8 +30,9 @@
     environmentVariables = {
       EDITOR = "\"nvim\"";
       VISUAL = "\"nvim\"";
-      BROWSER = "\"url-router.sh\"";
-      DEFAULT_BROWSER = "\"url-router.sh\"";
+      BROWSER = "\"/home/${NIXUSER}/.local/bin/url-router.sh\"";
+      DEFAULT_BROWSER = "\"/home/${NIXUSER}/.local/bin/url-router.sh\"";
+      NB_BROWSER = "firefox";
     };
   };
 
