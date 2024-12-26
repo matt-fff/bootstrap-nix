@@ -2,3 +2,4 @@
 
 export HOSTNAME="${HOSTNAME:-work}"
 export EXTRA_PACKAGES=""
+export CONFIG_EXCLUSIONS="nas-configuration.nix"

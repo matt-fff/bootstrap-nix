@@ -5,6 +5,8 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LINUX_TYPE="${LINUX_TYPE:-nix}"
+NIXDIR="${NIXDIR:-/etc/nixos}"
+UPGRADE="${UPGRADE:-false}"
 
 # Check if script is run with sudo
 if [ "$(id -u)" -ne 0 ]; then
@@ -17,8 +19,8 @@ fi
 ########################################################
 if [ "${LINUX_TYPE}" == "nix" ]; then
     # Check if we can access /etc/nixos
-    cd /etc/nixos || {
-        echo "Failed to change directory to /etc/nixos" 1>&2
+    cd "${NIXDIR}" || {
+        echo "Failed to change directory to ${NIXDIR}" 1>&2
         exit 1
     }
 
@@ -40,16 +42,6 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
         . "${SCRIPT_DIR}/envs/${HOSTNAME}.sh"
     fi
 
-    echo "Processing templates..."
-    # Process the template
-    nix-shell -p gettext --run "envsubst < \"${SCRIPT_DIR}/home-manager/packages.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/packages.nix\"
-                                envsubst < \"${SCRIPT_DIR}/home-manager/home.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/home.nix\"
-                                envsubst < \"${SCRIPT_DIR}/home-manager/shell.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/shell.nix\"
-                                envsubst < \"${SCRIPT_DIR}/home-manager/settings.nix.tmpl\" > \"${SCRIPT_DIR}/home-manager/settings.nix\"
-                                envsubst < \"${SCRIPT_DIR}/configuration.nix.tmpl\" > \"${SCRIPT_DIR}/configuration.nix\"
-                                envsubst < \"${SCRIPT_DIR}/flake.nix.tmpl\" > \"${SCRIPT_DIR}/flake.nix\"
-                                "
-    echo "Templates processed"
 
     # Create backup if it doesn't exist
     if [ ! -f configuration.nix ]; then
@@ -88,22 +80,51 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
         
         echo "Created luks-configuration.nix"
     fi
+    
+    echo "Processing templates..."
+    # Find all .tmpl files and process them with envsubst
+    nix-shell -p gettext --run "
+        for tmpl in ${SCRIPT_DIR}/*.tmpl ${SCRIPT_DIR}/**/*.tmpl; do
+            if [ -f \"\$tmpl\" ]; then
+                # Extract relative path from SCRIPT_DIR
+                rel_path=\"\${tmpl#${SCRIPT_DIR}/}\"
+                rel_dir=\"\$(dirname \"\${rel_path}\")\"
+                filename=\"\$(basename \"\${tmpl%.tmpl}\")\"
 
-    # Replace configuration.nix with the one from SCRIPT_DIR
-    if ! cp "$SCRIPT_DIR/configuration.nix" configuration.nix; then
-        echo "Failed to replace configuration.nix" 1>&2
-        exit 1
-    fi
-
-
-    # Copy nas-configuration.nix if hostname is not "work"
-    # if [ "$hostname" != "work" ]; then
-        if ! cp "$SCRIPT_DIR/nas-configuration.nix" nas-configuration.nix; then
-            echo "Failed to copy nas-configuration.nix" 1>&2
+                # Create output path preserving directory structure
+                output_file=\"${NIXDIR}/\${rel_dir}/\$filename\"
+                # Intentionally remove before checking exclusions - to clean up old files
+                rm -f \"\$output_file\"
+                
+                # Check each exclusion explicitly
+                skip_file=false
+                if [ -n \"\$CONFIG_EXCLUSIONS\" ]; then
+                    for exclusion in \$CONFIG_EXCLUSIONS; do
+                        if [ \"\$filename\" = \"\$exclusion\" ]; then
+                            skip_file=true
+                            printf 'Skipping Excluded Config:\n\t%s\n' \"\$tmpl\"
+                            break
+                        fi
+                    done
+                fi
+                
+                if [ \"\$skip_file\" = true ]; then
+                    continue
+                fi
+                
+                # Create output directory if it doesn't exist
+                mkdir -p \"${NIXDIR}/\${rel_dir}\"
+                
+                envsubst < \"\$tmpl\" > \"\$output_file\"
+                printf 'Processed: \n\t%s \n\t-> %s\n' \"\$tmpl\" \"\$output_file\"
+            else
+                printf 'Skipping: %s\n' \"\$tmpl\"
+            fi
+        done" || {
+            echo "Failed to process templates" 1>&2
             exit 1
-        fi
-        echo "Copied nas-configuration.nix"
-    # fi
+        }
+    echo "Templates processed"
 
 
     # Add additional configuration imports if they exist
@@ -128,7 +149,7 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
                 config_import="(import $config_import { $inherits })"
             fi
 
-            if ! sed -i '/\.\/luks-configuration.nix/a\          '"$config_import" ${SCRIPT_DIR}/flake.nix; then
+            if ! sed -i '/\.\/luks-configuration.nix/a\          '"$config_import" flake.nix; then
                 echo "Failed to add $config_file import" 1>&2
                 exit 1
             fi
@@ -136,16 +157,18 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
         fi
     done
 
-    cp -f "${SCRIPT_DIR}/flake.nix" flake.nix
-    echo "Copied flake.nix"
-
-    cp -f "${SCRIPT_DIR}/home-manager/"*.nix /etc/nixos/home-manager/
-    echo "Copied home-manager files"
-
-    # Rebuild NixOS configuration
-    if ! nixos-rebuild switch --upgrade; then
-        echo "Failed to rebuild NixOS configuration" 1>&2
-        exit 1
+    if [ "${UPGRADE}" = true ]; then
+        echo "Upgrading NixOS configuration"
+        if ! nixos-rebuild switch --upgrade; then
+            echo "Failed to rebuild NixOS configuration" 1>&2
+            exit 1
+        fi
+    else
+        echo "Rebuilding NixOS configuration"
+        if ! nixos-rebuild switch; then
+            echo "Failed to rebuild NixOS configuration" 1>&2
+            exit 1
+        fi
     fi
 
     echo "Successfully completed NixOS configuration update"
@@ -157,7 +180,13 @@ fi
 ########################################################
 if [ "${LINUX_TYPE}" == "arch" ]; then
     echo "Installing dependencies"
-    pacman -Sy --noconfirm \
+    if [ "${UPGRADE}" = true ]; then
+        echo "Upgrading Arch Linux packages"
+        pacman -Syu --noconfirm
+    else
+        echo "Installing Arch Linux packages"
+    fi
+    pacman -S --noconfirm \
         tailscale \
         curl \
         git \
@@ -175,10 +204,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         jq \
         docker \
         docker-compose \
-        gnome-remote-desktop \
         ttf-sharetech-mono-nerd
 
-    systemctl enable --now gnome-remote-desktop
     systemctl enable --now tailscaled
     systemctl enable --now docker
     tailscale up --ssh
