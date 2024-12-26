@@ -151,7 +151,7 @@
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = true;
-    ports = [ 22 ];
+    ports = [ 40422 ];
     openFirewall = true;
     settings = {
         UseDns = true;
@@ -163,6 +163,7 @@
         PermitRootLogin = "no";
     };
   };
+  services.fail2ban.enable = true;
   services.logind.lidSwitch = "ignore";
   services.logind.lidSwitchDocked = "ignore";
   services.udisks2 = {
