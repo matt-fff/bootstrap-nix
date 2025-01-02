@@ -40,6 +40,12 @@
     packages = with pkgs; [];
     shell = pkgs.nushell;
   };
+  users.users.greeter = {
+    isSystemUser = true;
+    description = "For running the login programs and so on";
+    extraGroups = [ "tty" "video" "input" "seat" "systemd-journal" ];
+    shell = pkgs.bash;
+  };
 
   nix.settings.allowed-users = [ "${NIXUSER}" ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -185,7 +191,7 @@
     openFirewall = true;
   };
   services.dnsmasq = {
-    enable = false;
+    enable = true;
   };
 
   services.gnome.gnome-keyring.enable = true;
@@ -202,22 +208,54 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-  services.udev.packages = [
-    pkgs.yubikey-personalization
-    pkgs.ledger-udev-rules
-  ];
+  services.udev = {
+    packages = [
+      pkgs.yubikey-personalization
+      pkgs.ledger-udev-rules
+    ];
+    extraRules = ''
+      KERNEL=="tty[0-9]*", GROUP="tty", MODE="0620", TAG+="systemd"
+      KERNEL=="vcs[0-9]*", GROUP="tty", MODE="0640", TAG+="systemd"
+      KERNEL=="vcsa[0-9]*", GROUP="tty", MODE="0640", TAG+="systemd"
+      SUBSYSTEM=="drm", TAG+="systemd", TAG+="seat"
+      SUBSYSTEM=="input", TAG+="systemd", TAG+="seat"
+    '';
+  };
   services.pcscd.enable = true;
-  services.gnome.gnome-remote-desktop.enable = true;
+  services.kmscon = {
+    enable = true;
+    hwRender = true;
+    fonts = [
+      {
+        name = "ShureTechMono Nerd Font";
+        package = pkgs.nerdfonts;
+      }
+    ];
+    extraConfig= ''
+      font-size=16
+    '';
+    extraOptions = "";
+  };
+  # TODO remove
+  environment.etc."greetd/greet.sh" = {
+    text = ''
+      #!/bin/sh
+      ${pkgs.kmscon}/bin/kmscon -l ${pkgs.greetd.tuigreet}/bin/tuigreet -- --time --cmd Hyprland
+    '';
+    mode = "0755";
+  };
   services.greetd = {                                                      
     enable = true;                                                         
     settings = {                                                           
-      default_session = {                                                  
+      default_session = {
         command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
-        user = "greeter";                                                  
+        #command = "${pkgs.kmscon}/bin/kmscon -l ${pkgs.greetd.tuigreet}/bin/tuigreet -- --time --cmd Hyprland";
+        #command = "/etc/greetd/greet.sh";
+        user = "greeter";
       };                                                                   
+      terminal.vt = 7;
     };                                                                     
   };
-
 
   security.rtkit.enable = true;
   security.pam.loginLimits = [

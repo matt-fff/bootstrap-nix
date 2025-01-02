@@ -16,13 +16,13 @@
     };
     unstablePkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     customPkgs = {
-      # TODO try to use the local copy to debug things.
       url = "github:matt-fff/my-nixpkgs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, unstablePkgs, customPkgs, ... }: 
+  outputs = inputs@{ nixpkgs, home-manager, unstablePkgs, customPkgs, nixos-hardware, ... }: 
   let
       system = "x86_64-linux";
       unstable = import unstablePkgs { 
@@ -45,6 +45,7 @@
           ./configuration.nix 
           ./hardware-configuration.nix
           ./luks-configuration.nix
+          ${NIX_HARDWARE}
 
           # make home-manager as a module of nixos
           # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
