@@ -236,11 +236,24 @@
     '';
     extraOptions = "";
   };
-  # TODO remove
   environment.etc."greetd/greet.sh" = {
     text = ''
-      #!/bin/sh
-      ${pkgs.kmscon}/bin/kmscon -l ${pkgs.greetd.tuigreet}/bin/tuigreet -- --time --cmd Hyprland
+      #!/usr/bin/env bash
+      LC_ADDRESS="en_US.UTF-8" \
+      LC_IDENTIFICATION="en_US.UTF-8" \
+      LC_MEASUREMENT="en_US.UTF-8" \
+      LC_MONETARY="en_US.UTF-8" \
+      LC_NAME="en_US.UTF-8" \
+      LC_NUMERIC="en_US.UTF-8" \
+      LC_PAPER="en_US.UTF-8" \
+      LC_TELEPHONE="en_US.UTF-8" \
+      LC_TIME="en_US.UTF-8" \
+      LANGUAGE="en_US.UTF-8" \
+      LC_ALL="en_US.UTF-8" \
+      LC_CTYPE="en_US.UTF-8" \
+      LC_COLLATE="en_US.UTF-8" \
+      LC_MESSAGES="en_US.UTF-8" \
+      ${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland
     '';
     mode = "0755";
   };
@@ -248,9 +261,7 @@
     enable = true;                                                         
     settings = {                                                           
       default_session = {
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
-        #command = "${pkgs.kmscon}/bin/kmscon -l ${pkgs.greetd.tuigreet}/bin/tuigreet -- --time --cmd Hyprland";
-        #command = "/etc/greetd/greet.sh";
+        command = "/etc/greetd/greet.sh";
         user = "greeter";
       };                                                                   
       terminal.vt = 7;
