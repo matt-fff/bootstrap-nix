@@ -3,7 +3,8 @@
 export NIXUSER="${NIXUSER:-matt}"
 export HOSTNAME="${HOSTNAME:-newnix}"
 export CONFIG_EXCLUSIONS=""
-export EXTRA_PACKAGES="
+export EXTRA_SYSTEM_PACKAGES=""
+export EXTRA_USER_PACKAGES="
     stable.monero-gui
     stable.monero-cli
     stable.ledger-live-desktop

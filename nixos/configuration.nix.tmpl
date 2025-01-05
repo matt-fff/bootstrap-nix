@@ -15,7 +15,6 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
-  virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
   virtualisation.docker = {
     enable = true;
@@ -27,6 +26,18 @@
       userland-proxy = false;
     };
   };
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.stable.qemu_kvm;
+      runAsRoot = true;
+      swtpm.enable = true;
+      ovmf = {
+        enable = true;
+      };
+    };
+  };
+
 
   # Set your time zone.
   time.timeZone = "America/Denver";
@@ -37,7 +48,7 @@
   users.users.${NIXUSER} = {
     isNormalUser = true;
     description = "${NIXUSER}";
-    extraGroups = [ "networkmanager" "wheel" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "video" "libvirtd" ];
     packages = with pkgs; [];
     shell = pkgs.unstable.nushell;
   };
@@ -56,43 +67,46 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs.stable; [
-    gdb
-    killall
-    python312
-    nodejs
-    git
-    git-lfs
-    kdiff3
-    dig
-    tmux
-    fzf
-    grc
-    packagekit
-    cifs-utils
-    mediainfo
-    sqlite
-    bluez
-    blueberry
-    udiskie
-    polkit
-    polkit_gnome
-    networkmanagerapplet
-    pavucontrol
-    pipewire
-    chezmoi
-    age
-    gh
-    dconf
-    lshw
-    pciutils
-    vim
-    wofi
-    nushell
+  environment.systemPackages = with pkgs; [
+    stable.gdb
+    stable.killall
+    stable.python312
+    stable.nodejs
+    stable.git
+    stable.git-lfs
+    stable.kdiff3
+    stable.dig
+    stable.tmux
+    stable.fzf
+    stable.grc
+    stable.packagekit
+    stable.cifs-utils
+    stable.mediainfo
+    stable.sqlite
+    stable.bluez
+    stable.blueberry
+    stable.udiskie
+    stable.polkit
+    stable.polkit_gnome
+    stable.networkmanagerapplet
+    stable.pavucontrol
+    stable.pipewire
+    stable.chezmoi
+    stable.age
+    stable.gh
+    stable.dconf
+    stable.lshw
+    stable.pciutils
+    stable.vim
+    stable.wofi
+    stable.nushell
+    stable.broot
 
     # Unstable packages
-    pkgs.unstable.neovim
-    pkgs.unstable.ghostty
+    unstable.neovim
+    unstable.ghostty
+
+    ${EXTRA_SYSTEM_PACKAGES}
   ];
 
   fonts.packages = with pkgs.unstable; [
