@@ -84,41 +84,47 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     echo "Processing templates..."
     # Find all .tmpl files and process them with envsubst
     nix-shell -p gettext --run "
-        for tmpl in ${SCRIPT_DIR}/*.tmpl ${SCRIPT_DIR}/**/*.tmpl; do
-            if [ -f \"\$tmpl\" ]; then
-                # Extract relative path from SCRIPT_DIR
-                rel_path=\"\${tmpl#${SCRIPT_DIR}/}\"
-                rel_dir=\"\$(dirname \"\${rel_path}\")\"
-                filename=\"\$(basename \"\${tmpl%.tmpl}\")\"
+        for base_dir in \"${SCRIPT_DIR}/nixos\" \"${SCRIPT_DIR}/envs/${HOSTNAME}\"; do
+            if [ -d \"\$base_dir\" ]; then
+                for tmpl in \"\$base_dir\"/*.tmpl \"\$base_dir\"/**/*.tmpl; do
+                    if [ -f \"\$tmpl\" ]; then
+                        # Extract relative path from base_dir
+                        rel_path=\"\${tmpl#\$base_dir/}\"
+                        rel_dir=\"\$(dirname \"\${rel_path}\")\"
+                        filename=\"\$(basename \"\${tmpl%.tmpl}\")\"
 
-                # Create output path preserving directory structure
-                output_file=\"${NIXDIR}/\${rel_dir}/\$filename\"
-                # Intentionally remove before checking exclusions - to clean up old files
-                rm -f \"\$output_file\"
-                
-                # Check each exclusion explicitly
-                skip_file=false
-                if [ -n \"\$CONFIG_EXCLUSIONS\" ]; then
-                    for exclusion in \$CONFIG_EXCLUSIONS; do
-                        if [ \"\$filename\" = \"\$exclusion\" ]; then
-                            skip_file=true
-                            printf 'Skipping Excluded Config:\n\t%s\n' \"\$tmpl\"
-                            break
+                        # Create output path preserving directory structure
+                        output_file=\"${NIXDIR}/\${rel_dir}/\$filename\"
+                        # Intentionally remove before checking exclusions - to clean up old files
+                        rm -f \"\$output_file\"
+                        
+                        # Check each exclusion explicitly
+                        skip_file=false
+                        if [ -n \"\$CONFIG_EXCLUSIONS\" ]; then
+                            for exclusion in \$CONFIG_EXCLUSIONS; do
+                                if [ \"\$filename\" = \"\$exclusion\" ]; then
+                                    skip_file=true
+                                    printf 'Skipping Excluded Config:\n\t%s\n' \"\$tmpl\"
+                                    break
+                                fi
+                            done
                         fi
-                    done
-                fi
-                
-                if [ \"\$skip_file\" = true ]; then
-                    continue
-                fi
-                
-                # Create output directory if it doesn't exist
-                mkdir -p \"${NIXDIR}/\${rel_dir}\"
-                
-                envsubst < \"\$tmpl\" > \"\$output_file\"
-                printf 'Processed: \n\t%s \n\t-> %s\n' \"\$tmpl\" \"\$output_file\"
+                        
+                        if [ \"\$skip_file\" = true ]; then
+                            continue
+                        fi
+                        
+                        # Create output directory if it doesn't exist
+                        mkdir -p \"${NIXDIR}/\${rel_dir}\"
+                        
+                        envsubst < \"\$tmpl\" > \"\$output_file\"
+                        printf 'Processed: \n\t%s \n\t-> %s\n' \"\$tmpl\" \"\$output_file\"
+                    else
+                        printf 'Skipping: %s\n' \"\$tmpl\"
+                    fi
+                done
             else
-                printf 'Skipping: %s\n' \"\$tmpl\"
+                printf 'Directory not found: %s\n' \"\$base_dir\"
             fi
         done" || {
             echo "Failed to process templates" 1>&2
@@ -127,16 +133,20 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     echo "Templates processed"
 
 
-    # Add additional configuration imports if they exist
-    for config_file in graphics-configuration.nix nas-configuration.nix network-configuration.nix; do
-        if [ -f "$config_file" ]; then
-            config_import="\.\/$config_file"
-
-            if ! sed -i '/\.\/luks-configuration.nix/a\          '"$config_import" flake.nix; then
-                echo "Failed to add $config_file import" 1>&2
+    # Add additional configuration imports
+    find "${NIXDIR}" -type f -name "*.nix" | while read -r config_file; do
+        basename_file=$(basename "$config_file")
+        # Skip specific files and home-manager directory
+        if [[ "$basename_file" != "configuration.nix" && \
+              "$basename_file" != "flake.nix" && \
+              ! "$config_file" =~ /home-manager/ ]]; then
+            config_import="\.\/${basename_file}"
+            
+            if ! sed -i '/\.\/configuration.nix/a\          '"$config_import" flake.nix; then
+                echo "Failed to add $basename_file import" 1>&2
                 exit 1
             fi
-            echo "Added $config_file import"
+            echo "Added $basename_file import"
         fi
     done
 

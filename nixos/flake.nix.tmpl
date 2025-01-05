@@ -3,14 +3,15 @@
 
   inputs = {
     nixpkgs = {
-      url = "nixpkgs/nixos-21.11";
+      url = "nixpkgs/nixos-24.11";
     };
-    # home-manager, used for managing user configuration
+    unstablePkgs = {
+      url = "nixpkgs/nixos-unstable";
+    };
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    unstablePkgs.url = "nixpkgs/nixos-unstable";
     customPkgs = {
       url = "github:matt-fff/my-nixpkgs";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -47,10 +48,8 @@
         inherit system;
 
         modules = [
-          ({ config, pkgs, ... }: { nixpkgs.overlays = [ overlay ]; })
+          ({ ... }: { nixpkgs.overlays = [ overlay ]; })
           ./configuration.nix 
-          ./hardware-configuration.nix
-          ./luks-configuration.nix
           ${ADDITIONAL_MODULES}
 
           # make home-manager as a module of nixos

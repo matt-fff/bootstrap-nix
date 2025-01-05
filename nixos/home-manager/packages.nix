@@ -1,0 +1,116 @@
+{ 
+  pkgs,
+  unstable,
+  custom,
+  ...
+}:
+
+{
+  # The home.packages option allows you to install Nix packages into your
+  # environment.
+  home.packages = [
+    pkgs.swaynotificationcenter
+    pkgs.sapling
+    pkgs.imagemagick
+    pkgs.perl
+    pkgs.meson
+    pkgs.alsa-utils
+    pkgs.pulseaudio
+    pkgs.htop
+    pkgs.nmap
+    pkgs.pandoc
+    pkgs.tig
+    pkgs.w3m
+    pkgs.glow
+    pkgs.playerctl
+    pkgs.docker_27
+    pkgs.docker-compose
+    pkgs.acpi
+    pkgs.sysstat
+    pkgs.xarchiver
+    pkgs.nomacs
+    pkgs.cheese
+    pkgs.nautilus
+    pkgs.libreoffice-qt6-still
+    pkgs.sublime3
+    pkgs.nb
+    pkgs.zoxide
+    pkgs.starship
+    pkgs.direnv
+    pkgs.bat
+    pkgs.obs-studio
+    pkgs.peek
+    pkgs.vlc
+    pkgs.openscad
+    pkgs.firefox
+    pkgs.brave
+    pkgs.chromium
+    pkgs.mullvad-browser
+    pkgs.pam_u2f
+    pkgs.yubioath-flutter
+    pkgs.gimp
+    pkgs.wireplumber
+    pkgs.cmake
+    pkgs.pnpm
+    pkgs.rye
+    pkgs.uv
+    pkgs.gnumake
+    pkgs.clang
+    pkgs.ninja
+    pkgs.automake
+    pkgs.autoconf
+    pkgs.remmina
+    pkgs.ripgrep
+    pkgs.bitwarden-desktop
+    pkgs.bruno
+    pkgs.usbutils
+    pkgs.jq
+    pkgs.hyprlock
+    pkgs.wl-clipboard
+    pkgs.cliphist
+    pkgs.hyprcursor
+    pkgs.hyprpicker
+    pkgs.hypridle
+    pkgs.libnotify
+    pkgs.gruvbox-gtk-theme
+    pkgs.gruvbox-plus-icons
+    pkgs.phinger-cursors
+    pkgs.ffmpeg
+    pkgs.skypeforlinux
+    pkgs.pantheon.elementary-iconbrowser
+    pkgs.google-cloud-sdk
+    pkgs.anki
+    pkgs.neofetch
+    pkgs.simple-scan
+    pkgs.wev
+    pkgs.davinci-resolve-studio
+    pkgs.blender
+    pkgs.libation
+    pkgs.solaar
+
+    unstable.thunderbird
+    unstable.hyprpolkitagent
+    unstable.nwg-displays
+    unstable.hyprpaper
+    unstable.waypaper
+    unstable.atuin
+
+    # Custom
+    custom.waybar
+    custom.flameshot
+    custom.hyprland-autoname-workspaces
+    custom.phinger-hyprcursor
+    custom.swww
+
+    # Unfree
+    unstable.pulumi-bin
+    unstable.code-cursor
+    unstable.morgen
+    pkgs.megasync
+    pkgs.slack
+    pkgs.spotify
+
+    # Extra packages
+    pkgs.monero-gui pkgs.monero-cli pkgs.ledger-live-desktop pkgs.wally-cli
+  ];
+}

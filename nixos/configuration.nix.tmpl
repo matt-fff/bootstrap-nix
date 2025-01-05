@@ -96,9 +96,9 @@
     pkgs.unstable.ghostty
   ];
 
-  # fonts.packages = with pkgs.unstable; [
-  #   nerdfonts.shure-tech-mono
-  # ];
+  fonts.packages = with pkgs.unstable; [
+    nerd-fonts.shure-tech-mono
+  ];
 
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "nvidia";
@@ -224,7 +224,7 @@
     fonts = [
       {
         name = "ShureTechMono Nerd Font";
-        package = pkgs.unstable.nerdfonts.shure-tech-mono;
+        package = pkgs.unstable.nerd-fonts.shure-tech-mono;
       }
     ];
     extraConfig= ''
