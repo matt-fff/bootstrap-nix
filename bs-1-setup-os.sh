@@ -187,7 +187,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         github-cli \
         chezmoi \
         tmux \
-        kitty \
+        ghostty \
         starship \
         nushell \
         atuin \
