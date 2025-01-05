@@ -3,18 +3,14 @@
 
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-24.11";
+      url = "nixpkgs/nixos-21.11";
     };
     # home-manager, used for managing user configuration
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
-      # The `follows` keyword in inputs is used for inheritance.
-      # Here, `inputs.nixpkgs` of home-manager is kept consistent with
-      # the `inputs.nixpkgs` of the current flake,
-      # to avoid problems caused by different versions of nixpkgs.
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    unstablePkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    unstablePkgs.url = "nixpkgs/nixos-unstable";
     customPkgs = {
       url = "github:matt-fff/my-nixpkgs";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,27 +21,37 @@
   outputs = inputs@{ nixpkgs, home-manager, unstablePkgs, customPkgs, nixos-hardware, ... }: 
   let
       system = "x86_64-linux";
-      unstable = import unstablePkgs { 
-        inherit system;
-        config.allowUnfree = true;
-      };
-      pkgs = import nixpkgs { 
-        inherit system;
-        config.allowUnfree = true;
-      };
-      custom = import customPkgs {
-        inherit pkgs;
-        inherit unstable;
+      overlay = final: prev: {
+        unstable = import unstablePkgs { 
+          inherit system;
+          config.allowUnfree = true;
+        };
+        stable = import nixpkgs { 
+          inherit system;
+          config.allowUnfree = true;
+        };
+        custom = import customPkgs {
+          pkgs = import nixpkgs { 
+            inherit system;
+            config.allowUnfree = true;
+          };
+          unstable = import unstablePkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        };
       };
   in {
     nixosConfigurations = {
       ${HOSTNAME} = nixpkgs.lib.nixosSystem {
+        inherit system;
 
         modules = [
+          ({ config, pkgs, ... }: { nixpkgs.overlays = [ overlay ]; })
           ./configuration.nix 
           ./hardware-configuration.nix
           ./luks-configuration.nix
-          ${NIX_HARDWARE}
+          ${ADDITIONAL_MODULES}
 
           # make home-manager as a module of nixos
           # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
@@ -55,11 +61,7 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = ".bak";
 
-            home-manager.users.${NIXUSER} = (import ./home-manager/home.nix {
-              inherit pkgs;
-              inherit unstable;
-              inherit custom;
-            });
+            home-manager.users.${NIXUSER} = (import ./home-manager/home.nix);
           }
         ];
       };

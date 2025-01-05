@@ -1,94 +1,91 @@
 { 
   pkgs,
-  unstable,
-  custom,
   ...
 }:
 
 {
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
-    pkgs.swaynotificationcenter
-    pkgs.sapling
-    pkgs.imagemagick
-    pkgs.perl
-    pkgs.meson
-    pkgs.alsa-utils
-    pkgs.pulseaudio
-    pkgs.htop
-    pkgs.nmap
-    pkgs.pandoc
-    pkgs.tig
-    pkgs.w3m
-    pkgs.glow
-    pkgs.playerctl
-    pkgs.docker_27
-    pkgs.docker-compose
-    pkgs.acpi
-    pkgs.sysstat
-    pkgs.xarchiver
-    pkgs.nomacs
-    pkgs.cheese
-    pkgs.nautilus
-    pkgs.libreoffice-qt6-still
-    pkgs.sublime3
-    pkgs.nb
-    pkgs.zoxide
-    pkgs.starship
-    pkgs.direnv
-    pkgs.bat
-    pkgs.obs-studio
-    pkgs.peek
-    pkgs.vlc
-    pkgs.openscad
-    pkgs.firefox
-    pkgs.brave
-    pkgs.chromium
-    pkgs.mullvad-browser
-    pkgs.tor-browser
-    pkgs.pam_u2f
-    pkgs.yubioath-flutter
-    pkgs.gimp
-    pkgs.wireplumber
-    pkgs.iw
-    pkgs.cmake
-    pkgs.pnpm
-    pkgs.gnumake
-    pkgs.clang
-    pkgs.automake
-    pkgs.autoconf
-    pkgs.remmina
-    pkgs.ripgrep
-    pkgs.bitwarden-desktop
-    pkgs.bruno
-    pkgs.usbutils
-    pkgs.jq
-    pkgs.hyprlock
-    pkgs.wl-clipboard
-    pkgs.cliphist
-    pkgs.hyprcursor
-    pkgs.hyprpicker
-    pkgs.hypridle
-    pkgs.libnotify
-    pkgs.gruvbox-gtk-theme
-    pkgs.gruvbox-plus-icons
-    pkgs.phinger-cursors
-    pkgs.ffmpeg
-    pkgs.skypeforlinux
-    pkgs.pantheon.elementary-iconbrowser
-    pkgs.google-cloud-sdk
-    pkgs.anki
-    pkgs.neofetch
-    pkgs.simple-scan
-    pkgs.wev
-    pkgs.davinci-resolve-studio
-    pkgs.blender
-    pkgs.telegram-desktop
-    pkgs.flyctl
-    pkgs.dmidecode
+  home.packages = with pkgs; [
+    stable.swaynotificationcenter
+    stable.sapling
+    stable.imagemagick
+    stable.perl
+    stable.meson
+    stable.alsa-utils
+    stable.pulseaudio
+    stable.btop
+    stable.nmap
+    stable.pandoc
+    stable.tig
+    stable.w3m
+    stable.glow
+    stable.playerctl
+    stable.docker_27
+    stable.docker-compose
+    stable.acpi
+    stable.sysstat
+    stable.xarchiver
+    stable.nomacs
+    stable.cheese
+    stable.nautilus
+    stable.libreoffice-qt6-still
+    stable.sublime3
+    stable.nb
+    stable.zoxide
+    stable.starship
+    stable.direnv
+    stable.bat
+    stable.obs-studio
+    stable.peek
+    stable.vlc
+    stable.openscad
+    stable.firefox
+    stable.brave
+    stable.chromium
+    stable.mullvad-browser
+    stable.tor-browser
+    stable.pam_u2f
+    stable.yubioath-flutter
+    stable.gimp
+    stable.wireplumber
+    stable.iw
+    stable.cmake
+    stable.pnpm
+    stable.gnumake
+    stable.clang
+    stable.automake
+    stable.autoconf
+    stable.remmina
+    stable.ripgrep
+    stable.bitwarden-desktop
+    stable.bruno
+    stable.usbutils
+    stable.jq
+    stable.hyprlock
+    stable.wl-clipboard
+    stable.cliphist
+    stable.hyprcursor
+    stable.hyprpicker
+    stable.hypridle
+    stable.libnotify
+    stable.gruvbox-gtk-theme
+    stable.gruvbox-plus-icons
+    stable.phinger-cursors
+    stable.ffmpeg
+    stable.skypeforlinux
+    stable.pantheon.elementary-iconbrowser
+    stable.google-cloud-sdk
+    stable.anki
+    stable.neofetch
+    stable.simple-scan
+    stable.wev
+    stable.davinci-resolve-studio
+    stable.blender
+    stable.telegram-desktop
+    stable.flyctl
+    stable.dmidecode
 
-    unstable.ladybird
     unstable.thunderbird
     unstable.hyprpolkitagent
     unstable.nwg-displays
@@ -107,9 +104,9 @@
     unstable.pulumi-bin
     unstable.code-cursor
     unstable.morgen
-    pkgs.megasync
-    pkgs.slack
-    pkgs.spotify
+    stable.megasync
+    stable.slack
+    stable.spotify
 
     # Extra packages
     ${EXTRA_PACKAGES}

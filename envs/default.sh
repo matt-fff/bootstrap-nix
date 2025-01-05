@@ -3,8 +3,13 @@
 export NIXUSER="${NIXUSER:-matt}"
 export HOSTNAME="${HOSTNAME:-newnix}"
 export CONFIG_EXCLUSIONS=""
-export EXTRA_PACKAGES="pkgs.monero-gui pkgs.monero-cli pkgs.ledger-live-desktop pkgs.wally-cli"
-export NIX_HARDWARE=""
+export EXTRA_PACKAGES="
+    stable.monero-gui
+    stable.monero-cli
+    stable.ledger-live-desktop
+    stable.wally-cli
+"
+export ADDITIONAL_MODULES=""
 export LOCALE="
   i18n = {
     # Select internationalisation properties.
@@ -28,3 +33,5 @@ export LOCALE="
     };
   };
   "
+# TODO setup files that can be dynamically detected and added.
+export CUSTOM_SYSTEM_CONFIG=""

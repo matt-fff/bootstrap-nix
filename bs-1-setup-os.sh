@@ -131,23 +131,6 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     for config_file in graphics-configuration.nix nas-configuration.nix network-configuration.nix; do
         if [ -f "$config_file" ]; then
             config_import="\.\/$config_file"
-            # Check if first line contains unstable or customPkgs
-            inherits=""
-            should_wrap_import=false
-            for item in "pkgs" "unstable" "custom"; do
-                if grep -q "$item" "$config_file" 2>/dev/null; then
-                    inherits="${inherits}inherit ${item}; "
-                    if [ "$item" != "pkgs" ]; then
-                        should_wrap_import=true
-                    fi
-                fi
-            done
-            inherits="${inherits% }" # Remove trailing space
-
-            if $should_wrap_import; then
-                echo "Wrapping $config_file import with { $inherits }"
-                config_import="(import $config_import { $inherits })"
-            fi
 
             if ! sed -i '/\.\/luks-configuration.nix/a\          '"$config_import" flake.nix; then
                 echo "Failed to add $config_file import" 1>&2

@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   # Bootloader.
@@ -39,13 +39,13 @@
     description = "${NIXUSER}";
     extraGroups = [ "networkmanager" "wheel" "video" ];
     packages = with pkgs; [];
-    shell = pkgs.nushell;
+    shell = pkgs.unstable.nushell;
   };
   users.users.greeter = {
     isSystemUser = true;
     description = "For running the login programs and so on";
     extraGroups = [ "tty" "video" "input" "seat" "systemd-journal" ];
-    shell = pkgs.bash;
+    shell = pkgs.stable.bash;
   };
 
   nix.settings.allowed-users = [ "${NIXUSER}" ];
@@ -56,7 +56,7 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs.stable; [
     gdb
     killall
     python312
@@ -91,19 +91,14 @@
     wofi
 
     # Unstable packages
-    pkgs.neovim
-    pkgs.nushell
+    pkgs.unstable.neovim
+    pkgs.unstable.nushell
+    pkgs.unstable.ghostty
   ];
 
-  #Necessary for the next nix version
-  #fonts.packages = [
-  #  pkgs.nerd-fonts.shure-tech-mono
-  #];
-
-  fonts.packages = with pkgs; [
-    nerdfonts
-  ];
-
+  # fonts.packages = with pkgs.unstable; [
+  #   nerdfonts.shure-tech-mono
+  # ];
 
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "nvidia";
@@ -142,7 +137,7 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    package = pkgs.hyprland;
+    package = pkgs.stable.hyprland;
   };
 
   # List services that you want to enable:
@@ -200,7 +195,7 @@
   services.xrdp = {
     enable = true;
     openFirewall = true; 
-    defaultWindowManager = "${pkgs.gnome-session}/bin/gnome-session";
+    defaultWindowManager = "${pkgs.stable.gnome-session}/bin/gnome-session";
   };
 
   services.pipewire = {
@@ -210,9 +205,9 @@
     pulse.enable = true;
   };
   services.udev = {
-    packages = [
-      pkgs.yubikey-personalization
-      pkgs.ledger-udev-rules
+    packages = with pkgs.stable; [
+      yubikey-personalization
+      ledger-udev-rules
     ];
     extraRules = ''
       KERNEL=="tty[0-9]*", GROUP="tty", MODE="0620", TAG+="systemd"
@@ -229,7 +224,7 @@
     fonts = [
       {
         name = "ShureTechMono Nerd Font";
-        package = pkgs.nerdfonts;
+        package = pkgs.unstable.nerdfonts.shure-tech-mono;
       }
     ];
     extraConfig= ''
@@ -254,7 +249,7 @@
       LC_CTYPE="en_US.UTF-8" \
       LC_COLLATE="en_US.UTF-8" \
       LC_MESSAGES="en_US.UTF-8" \
-      ${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland
+      ${pkgs.stable.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland
     '';
     mode = "0755";
   };
@@ -277,6 +272,8 @@
   networking.firewall = {
     enable = true;
   };
+
+  ${CUSTOM_SYSTEM_CONFIG}
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

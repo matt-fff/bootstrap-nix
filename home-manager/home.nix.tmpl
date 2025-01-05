@@ -1,17 +1,10 @@
 {
-  pkgs,
-  unstable, 
-  custom, 
   ... 
 }:
 
 {
   imports = [
-    (import ./packages.nix {
-      inherit pkgs;
-      inherit unstable;
-      inherit custom;
-    })
+    ./packages.nix
     ./settings.nix
     ./shell.nix
   ];
