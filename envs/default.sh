@@ -1,16 +1,18 @@
 #!/usr/bin/env sh
 
+# User
 export NIXUSER="${NIXUSER:-matt}"
+
+# Hostname
 export HOSTNAME="${HOSTNAME:-newnix}"
+
+# Exclude certain configuration files from being auto-imported into flake.nix
 export CONFIG_EXCLUSIONS=""
-export EXTRA_SYSTEM_PACKAGES=""
-export EXTRA_USER_PACKAGES="
-    stable.monero-gui
-    stable.monero-cli
-    stable.ledger-live-desktop
-    stable.wally-cli
-"
+
+# For setting up specific nixos-hardware imports in flake.nix
 export ADDITIONAL_MODULES=""
+
+# System locale
 export LOCALE="
   i18n = {
     # Select internationalisation properties.
@@ -34,5 +36,3 @@ export LOCALE="
     };
   };
   "
-# TODO setup files that can be dynamically detected and added.
-export CUSTOM_SYSTEM_CONFIG=""

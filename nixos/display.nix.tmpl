@@ -1,0 +1,67 @@
+{ pkgs, config, ... }:
+
+{
+  fonts.packages = with pkgs.unstable; [
+    nerd-fonts.shure-tech-mono
+  ];
+
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "nvidia";
+    NVD_BACKEND = "direct";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    XDG_SESSION_TYPE = "wayland";
+    XDG_CURRENT_DESKTOP = "Hyprland";
+    XDG_SESSION_DESKTOP = "Hyprland";
+    NIXOS_OZONE_WL = "1";
+    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+    
+    # Optional, may help with some apps
+    __GL_GSYNC_ALLOWED = "0";
+    __GL_VRR_ALLOWED = "0";
+    WLR_DRM_NO_ATOMIC = "1";
+  };
+  xdg.portal = {
+    enable = true;
+    config.common.default = [ "hyprland" ];
+  };
+
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+    package = pkgs.stable.hyprland;
+  };
+
+  services.gnome.gnome-keyring.enable = true;
+  environment.etc."greetd/greet.sh" = {
+    text = ''
+      #!/usr/bin/env bash
+      LC_ADDRESS="en_US.UTF-8" \
+      LC_IDENTIFICATION="en_US.UTF-8" \
+      LC_MEASUREMENT="en_US.UTF-8" \
+      LC_MONETARY="en_US.UTF-8" \
+      LC_NAME="en_US.UTF-8" \
+      LC_NUMERIC="en_US.UTF-8" \
+      LC_PAPER="en_US.UTF-8" \
+      LC_TELEPHONE="en_US.UTF-8" \
+      LC_TIME="en_US.UTF-8" \
+      LANGUAGE="en_US.UTF-8" \
+      LC_ALL="en_US.UTF-8" \
+      LC_CTYPE="en_US.UTF-8" \
+      LC_COLLATE="en_US.UTF-8" \
+      LC_MESSAGES="en_US.UTF-8" \
+      ${pkgs.stable.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland
+    '';
+    mode = "0755";
+  };
+  services.greetd = {                                                      
+    enable = true;                                                         
+    vt = 7;
+    settings = {                                                           
+      default_session = {
+        command = "/etc/greetd/greet.sh";
+        user = "greeter";
+      };                                                                   
+    };                                                                     
+  };
+}

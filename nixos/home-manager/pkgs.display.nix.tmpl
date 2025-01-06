@@ -1,0 +1,30 @@
+{ 
+  pkgs,
+  ...
+}:
+
+{
+  home.packages = with pkgs; [
+    stable.swaynotificationcenter
+    stable.hyprlock
+    stable.wl-clipboard
+    stable.cliphist
+    stable.hyprcursor
+    stable.hyprpicker
+    stable.hypridle
+    unstable.hyprpolkitagent
+    unstable.nwg-displays
+    unstable.hyprpaper
+    unstable.waypaper
+    custom.waybar
+    custom.flameshot
+    custom.hyprland-autoname-workspaces
+    custom.phinger-hyprcursor
+    custom.swww
+    stable.wofi
+    stable.libnotify
+    stable.gruvbox-gtk-theme
+    stable.gruvbox-plus-icons
+    stable.phinger-cursors
+  ];
+}
