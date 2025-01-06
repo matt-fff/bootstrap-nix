@@ -44,12 +44,7 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
 
 
     # Create backup if it doesn't exist
-    if [ ! -f configuration.nix ]; then
-        echo "configuration.nix not found" 1>&2
-        exit 1
-    fi
-
-    if [ ! -f configuration.nix.bak ]; then
+    if [ ! -f configuration.nix.bak ] && [ -f configuration.nix ]; then
         cp configuration.nix configuration.nix.bak || {
             echo "Failed to create backup of configuration.nix" 1>&2
             exit 1
@@ -89,12 +84,12 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
                 for tmpl in \"\$base_dir\"/*.tmpl \"\$base_dir\"/**/*.tmpl; do
                     if [ -f \"\$tmpl\" ]; then
                         # Extract relative path from base_dir
-                        rel_path=\"\${tmpl#\$base_dir/}\"
+                        rel_path=\"\$(realpath --relative-to=\${base_dir} \"\$tmpl\")\"
                         rel_dir=\"\$(dirname \"\${rel_path}\")\"
                         filename=\"\$(basename \"\${tmpl%.tmpl}\")\"
 
                         # Create output path preserving directory structure
-                        output_file=\"${NIXDIR}/\${rel_dir}/\$filename\"
+                        output_file=\"${NIXDIR}/\${rel_dir}/\${filename}\"
                         # Intentionally remove before checking exclusions - to clean up old files
                         rm -f \"\$output_file\"
                         
