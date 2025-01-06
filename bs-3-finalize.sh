@@ -9,6 +9,17 @@ LINUX_TYPE="${LINUX_TYPE:-nix}"
 # Just in case it was left over from a previous run
 rm -f ~/.age/github.token 2>/dev/null || true
 
+
+echo "Generating SSH key..."
+ssh-keygen -t rsa -b 4096 -C "mail@matt-w.net" -f ~/.ssh/github.pem
+
+echo "Logging in to GitHub..."
+gh auth login -h GitHub.com --skip-ssh-key -p ssh
+
+echo "Adding SSH key to GitHub..."
+gh ssh-key add ~/.ssh/github.pem.pub --title $(hostname)-$(date +%s)
+
+
 # Set the remote URLs for the repositories
 echo "Fixing remote URLs for the repositories to use SSH..."
 git -C ~/.config/chezmoi remote set-url origin git@github.com:matt-fff/.chezmoi.git
@@ -26,36 +37,6 @@ for repo in "deepthought" "cutter-templates"; do
         echo "Directory already exists: $target_dir"
     fi
 done
-
-# Create OpenSCAD libraries directory
-mkdir -p ~/.local/share/OpenSCAD/libraries
-
-# Define OpenSCAD repositories to clone
-declare -A scad_repos=(
-    ["scadlib"]="matt-fff/scadlib"
-    ["BOSL2"]="BelfrySCAD/BOSL2"
-    ["cc-scad"]="codefold/cc-scad"
-    ["constructive"]="solidboredom/constructive"
-    ["bladegen-lib"]="tallakt/bladegen"
-)
-
-# Clone OpenSCAD repositories
-for dir in "${!scad_repos[@]}"; do
-    target_dir="$HOME/.local/share/OpenSCAD/libraries/$dir"
-    if [ ! -d "$target_dir" ]; then
-        git clone "git@github.com:${scad_repos[$dir]}.git" "$target_dir"
-    else
-        echo "Directory already exists: $target_dir"
-    fi
-done
-
-# Create bladegen symlink if it doesn't exist
-bladegen_link="$HOME/.local/share/OpenSCAD/libraries/bladegen"
-if [ ! -L "$bladegen_link" ]; then
-    ln -s ~/.local/share/OpenSCAD/libraries/bladegen-lib/libraries/bladegen "$bladegen_link"
-else
-    echo "Symlink already exists: $bladegen_link"
-fi
 
 if [ "${LINUX_TYPE}" == "arch" ]; then
   yay -Sy --noconfirm --sudoloop \
