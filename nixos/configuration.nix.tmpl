@@ -52,12 +52,6 @@
     packages = with pkgs; [];
     shell = pkgs.unstable.nushell;
   };
-  users.users.greeter = {
-    isSystemUser = true;
-    description = "For running the login programs and so on";
-    extraGroups = [ "tty" "video" "input" "seat" "systemd-journal" ];
-    shell = pkgs.stable.bash;
-  };
 
   nix.settings.allowed-users = [ "${NIXUSER}" ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
