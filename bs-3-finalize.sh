@@ -13,6 +13,9 @@ rm -f ~/.age/github.token 2>/dev/null || true
 echo "Generating SSH key..."
 ssh-keygen -t rsa -b 4096 -C "mail@matt-w.net" -f ~/.ssh/github.pem
 
+echo "Logging out of GitHub limited token..."
+gh auth logout
+
 echo "Logging in to GitHub..."
 gh auth login -h GitHub.com --skip-ssh-key -p ssh
 
@@ -42,7 +45,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
   yay -Sy --noconfirm --sudoloop \
     asdf-vm \
     sapling-scm-bin \
-    xrdp
+    xrdp \
+    ghostty-git
 
   sudo systemctl enable --now xrdp
 

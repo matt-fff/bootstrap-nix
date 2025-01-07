@@ -192,7 +192,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         jq \
         docker \
         docker-compose \
-        ttf-sharetech-mono-nerd
+        ttf-sharetech-mono-nerd \
+        nix
 
     systemctl enable --now tailscaled
     systemctl enable --now docker

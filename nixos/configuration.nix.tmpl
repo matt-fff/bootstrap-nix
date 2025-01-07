@@ -5,6 +5,11 @@
 { pkgs, config, ... }:
 
 {
+  nix = {
+    settings.allowed-users = [ "${NIXUSER}" ];
+    settings.experimental-features = [ "nix-command" "flakes" ];
+  };
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -53,8 +58,6 @@
     shell = pkgs.unstable.nushell;
   };
 
-  nix.settings.allowed-users = [ "${NIXUSER}" ];
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -87,7 +90,6 @@
     stable.lshw
     stable.pciutils
     stable.vim
-    stable.nushell
     stable.broot
     stable.networkmanagerapplet
     stable.nmap
