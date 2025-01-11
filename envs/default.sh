@@ -10,7 +10,12 @@ export HOSTNAME="${HOSTNAME:-newnix}"
 export CONFIG_EXCLUSIONS=""
 
 # For setting up specific nixos-hardware imports in flake.nix
+export ADDITIONAL_INPUTS=""
+# e.g. export ADDITIONAL_INPUTS="nixos-hardware.url = \"nixos-hardware/master\";"
+export ADDITIONAL_OUTPUTS=""
+# e.g. export ADDITIONAL_OUTPUTS="nixos-hardware"
 export ADDITIONAL_MODULES=""
+# e.g. export ADDITIONAL_MODULES="nixos-hardware.nixosModules.lenovo-legion-16irx9h"
 
 # System locale
 export LOCALE="

@@ -3,40 +3,25 @@
 
   inputs = {
     nixpkgs = {
-      url = "nixpkgs/nixos-24.11";
-    };
-    unstablePkgs = {
       url = "nixpkgs/nixos-unstable";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     customPkgs = {
       url = "github:matt-fff/my-nixpkgs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    ${ADDITIONAL_INPUTS}
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, unstablePkgs, customPkgs, nixos-hardware, ... }: 
+  outputs = inputs@{ nixpkgs, home-manager, customPkgs, ${ADDITIONAL_OUTPUTS} ... }: 
   let
       system = "x86_64-linux";
       overlay = final: prev: {
-        unstable = import unstablePkgs { 
-          inherit system;
-          config.allowUnfree = true;
-        };
-        stable = import nixpkgs { 
-          inherit system;
-          config.allowUnfree = true;
-        };
         custom = import customPkgs {
           pkgs = import nixpkgs { 
-            inherit system;
-            config.allowUnfree = true;
-          };
-          unstable = import unstablePkgs {
             inherit system;
             config.allowUnfree = true;
           };
@@ -58,7 +43,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = ".bak";
+            home-manager.backupFileExtension = ".hmbak";
 
             home-manager.users.${NIXUSER} = (import ./home-manager/home.nix);
           }

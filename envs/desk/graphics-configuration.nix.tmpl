@@ -5,9 +5,9 @@
   hardware.graphics = {
     enable = true;
     extraPackages = [
-      pkgs.stable.nvidia-vaapi-driver
+      pkgs.nvidia-vaapi-driver
     ];
-    package = pkgs.stable.mesa.drivers;
+    package = pkgs.mesa.drivers;
   };
   services.xserver.videoDrivers = ["nvidia"];
 

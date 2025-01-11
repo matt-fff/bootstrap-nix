@@ -34,7 +34,7 @@
   virtualisation.libvirtd = {
     enable = true;
     qemu = {
-      package = pkgs.stable.qemu_kvm;
+      package = pkgs.qemu_kvm;
       runAsRoot = true;
       swtpm.enable = true;
       ovmf = {
@@ -55,7 +55,7 @@
     description = "${NIXUSER}";
     extraGroups = [ "networkmanager" "wheel" "video" "libvirtd" ];
     packages = with pkgs; [];
-    shell = pkgs.unstable.nushell;
+    shell = pkgs.nushell;
   };
 
 
@@ -65,37 +65,37 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    stable.gdb
-    stable.killall
-    stable.python312
-    stable.nodejs
-    stable.git
-    stable.git-lfs
-    stable.dig
-    stable.tmux
-    stable.fzf
-    stable.ripgrep
-    stable.grc
-    stable.packagekit
-    stable.cifs-utils
-    stable.mediainfo
-    stable.sqlite
-    stable.udiskie
-    stable.polkit
-    stable.pipewire
-    stable.chezmoi
-    stable.age
-    stable.gh
-    stable.dconf
-    stable.lshw
-    stable.pciutils
-    stable.vim
-    stable.broot
-    stable.networkmanagerapplet
-    stable.nmap
+    gdb
+    killall
+    python312
+    nodejs
+    git
+    git-lfs
+    dig
+    tmux
+    fzf
+    ripgrep
+    grc
+    packagekit
+    cifs-utils
+    mediainfo
+    sqlite
+    udiskie
+    polkit
+    pipewire
+    chezmoi
+    age
+    gh
+    dconf
+    lshw
+    pciutils
+    vim
+    broot
+    networkmanagerapplet
+    nmap
 
-    unstable.ghostty
-    unstable.neovim
+    ghostty
+    neovim
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -118,7 +118,6 @@
       enable = true;
       powerOnBoot = true;
     };
-    pulseaudio.enable = false;
   };
 
   # Enable the OpenSSH daemon.
@@ -136,6 +135,7 @@
         PermitRootLogin = "no";
     };
   };
+  services.pulseaudio.enable = false;
   services.fail2ban.enable = true;
   services.logind.lidSwitch = "ignore";
   services.logind.lidSwitchDocked = "ignore";
@@ -165,7 +165,7 @@
   services.xrdp = {
     enable = true;
     openFirewall = true; 
-    defaultWindowManager = "${pkgs.stable.gnome-session}/bin/gnome-session";
+    defaultWindowManager = "${pkgs.gnome-session}/bin/gnome-session";
   };
 
   services.pipewire = {
@@ -175,7 +175,7 @@
     pulse.enable = true;
   };
   services.udev = {
-    packages = with pkgs.stable; [
+    packages = with pkgs; [
       yubikey-personalization
       ledger-udev-rules
     ];
@@ -194,7 +194,7 @@
     fonts = [
       {
         name = "ShureTechMono Nerd Font";
-        package = pkgs.unstable.nerd-fonts.shure-tech-mono;
+        package = pkgs.nerd-fonts.shure-tech-mono;
       }
     ];
     extraConfig= ''
@@ -218,6 +218,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "25.05"; # Did you read the comment?
 
 }
