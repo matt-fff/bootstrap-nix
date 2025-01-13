@@ -10,19 +10,6 @@ LINUX_TYPE="${LINUX_TYPE:-nix}"
 rm -f ~/.age/github.token 2>/dev/null || true
 
 
-echo "Generating SSH key..."
-ssh-keygen -t rsa -b 4096 -C "mail@matt-w.net" -f ~/.ssh/github.pem
-
-echo "Logging out of GitHub limited token..."
-gh auth logout
-
-echo "Logging in to GitHub..."
-gh auth login -h GitHub.com --skip-ssh-key -p ssh
-
-echo "Adding SSH key to GitHub..."
-gh ssh-key add ~/.ssh/github.pem.pub --title $(hostname)-$(date +%s)
-
-
 # Set the remote URLs for the repositories
 echo "Fixing remote URLs for the repositories to use SSH..."
 git -C ~/.config/chezmoi remote set-url origin git@github.com:matt-fff/.chezmoi.git
