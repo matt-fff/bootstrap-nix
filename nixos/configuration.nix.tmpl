@@ -93,6 +93,7 @@
     broot
     networkmanagerapplet
     nmap
+    pinentry-curses
 
     ghostty
     neovim
@@ -211,6 +212,12 @@
   networking.firewall = {
     enable = true;
   };
+
+  environment.etc."pinentry-curses".source = "${pkgs.pinentry-curses}/bin/pinentry-curses";
+  system.activationScripts.pinentry-curses = ''
+    mkdir -p /usr/bin
+    ln -sf ${pkgs.pinentry-curses}/bin/pinentry-curses /usr/bin/pinentry-curses
+  '';
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
