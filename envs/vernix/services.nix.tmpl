@@ -124,22 +124,14 @@
   services.nginx = {
     enable = true;
     recommendedProxySettings = true;
-    virtualHosts."${HOSTNAME}.tuna-moth.ts.net" = {
-      locations."/apps/abs/" = {
-        proxyPass = "http://127.0.0.1:${builtins.toString config.services.audiobookshelf.port}";
-        proxyWebsockets = true;
-        extraConfig = ''
-          rewrite ^/apps/abs/(.*) /$1 break;
-          proxy_redirect http:// $scheme://;
-        '';
-      };
-      locations."/apps/deluge/" = {
-        proxyPass = "http://127.0.0.1:${builtins.toString config.services.deluge.web.port}";
-        proxyWebsockets = true;
-        extraConfig = ''
-          rewrite ^/apps/deluge/(.*) /$1 break;
-          proxy_redirect http:// $scheme://;
-        '';
+    virtualHosts = {
+      "${HOSTNAME}.tuna-moth.ts.net" = {
+        locations = {
+          "/" = {
+            proxyPass = "http://127.0.0.1:${builtins.toString config.services.audiobookshelf.port}";
+            proxyWebsockets = true;
+          };
+        };
       };
     };
   };
