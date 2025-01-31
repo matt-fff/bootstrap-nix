@@ -4,7 +4,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-LINUX_TYPE="$(get-os.sh)"
+LINUX_TYPE="$(source ${SCRIPT_DIR}/get-os.sh)"
 
 # Just in case it was left over from a previous run
 rm -f ~/.age/github.token 2>/dev/null || true
@@ -32,7 +32,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
   yay -Sy --noconfirm --sudoloop \
     asdf-vm \
     sapling-scm-bin \
-    xrdp
+    xrdp \
+    gnome-remote-desktop
 
   sudo systemctl enable --now xrdp
 
@@ -44,7 +45,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     echo "" >> ~/.config/nushell/env.nu
   fi
 
-  for plugin in uv pnpm nodejs pulumi gleam zig gcloud; do
+  for plugin in $(awk '{print $1}' ~/.tool-versions); do
     /opt/asdf-vm/bin/asdf plugin add "$plugin"
   done
   /opt/asdf-vm/bin/asdf install
