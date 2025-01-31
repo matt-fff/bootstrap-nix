@@ -4,7 +4,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-LINUX_TYPE="${LINUX_TYPE:-nix}"
+LINUX_TYPE="$(get-os.sh)"
 
 # Just in case it was left over from a previous run
 rm -f ~/.age/github.token 2>/dev/null || true
@@ -45,9 +45,9 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
   fi
 
   for plugin in uv pnpm nodejs pulumi gleam zig gcloud; do
-    asdf plugin add "$plugin"
+    /opt/asdf-vm/bin/asdf plugin add "$plugin"
   done
-  asdf install
+  /opt/asdf-vm/bin/asdf install
 fi
 
 cd "$SCRIPT_DIR" || {
