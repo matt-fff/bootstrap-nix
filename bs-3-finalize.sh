@@ -32,8 +32,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
   yay -Sy --noconfirm --sudoloop \
     asdf-vm \
     sapling-scm-bin \
-    xrdp \
-    ghostty-git
+    xrdp
 
   sudo systemctl enable --now xrdp
 
