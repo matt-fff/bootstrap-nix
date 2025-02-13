@@ -147,7 +147,7 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
 
     if [ "${UPGRADE}" = true ]; then
         echo "Upgrading NixOS configuration"
-        if ! nixos-rebuild switch --upgrade; then
+        if ! nixos-rebuild switch --flake .\#${HOSTNAME} --option build-use-sandbox false --option eval-cache false; then
             echo "Failed to rebuild NixOS configuration" 1>&2
             exit 1
         fi
