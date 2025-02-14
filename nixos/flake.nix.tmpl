@@ -43,7 +43,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = ".hmbak";
+            home-manager.backupFileExtension = ".hm.bak";
 
             home-manager.users.${NIXUSER} = (import ./home-manager/home.nix);
           }

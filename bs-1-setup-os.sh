@@ -176,6 +176,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     fi
     pacman -S --noconfirm \
         tailscale \
+        direnv \
         curl \
         git \
         age \

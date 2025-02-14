@@ -32,8 +32,15 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
   yay -Sy --noconfirm --sudoloop \
     asdf-vm \
     sapling-scm-bin \
+<<<<<<< Updated upstream
     xrdp \
     gnome-remote-desktop
+||||||| Stash base
+    xrdp
+=======
+    xrdp \ 
+    cifs-utils
+>>>>>>> Stashed changes
 
   sudo systemctl enable --now xrdp
 
