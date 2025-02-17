@@ -23,7 +23,15 @@
         custom = import customPkgs {
           pkgs = import nixpkgs { 
             inherit system;
-            config.allowUnfree = true;
+            config = {
+              allowUnfree = true;
+              packageOverrides = pkgs: {
+                espanso = pkgs.espanso.override {
+                  x11Support = false;
+                  waylandSupport = true;
+                };
+              };
+            };
           };
         };
       };

@@ -3,7 +3,9 @@
 {
   fonts.packages = with pkgs; [
     nerd-fonts.shure-tech-mono
+    montserrat
   ];
+  fonts.fontDir.enable = true;
 
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "nvidia";
@@ -31,6 +33,10 @@
     xwayland.enable = true;
     package = pkgs.hyprland;
   };
+
+  environment.systemPackages = with pkgs; [
+    espanso
+  ];
 
   services.gnome.gnome-keyring.enable = true;
   environment.etc."greetd/greet.sh" = {

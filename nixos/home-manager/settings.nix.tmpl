@@ -18,13 +18,37 @@
         "application/atom+xml" = "url-router.desktop";
         "application/x-extension-shtml" = "url-router.desktop";
         "application/rss+xml" = "url-router.desktop";
+        "image/gif" = "nomacs.desktop";
+        "image/jpeg" = "nomacs.desktop";
+        "image/png" = "nomacs.desktop";
+        "image/jpg" = "nomacs.desktop";
+        "image/bmp" = "nomacs.desktop";
+        "image/tiff" = "nomacs.desktop";
+        "image/webp" = "nomacs.desktop";
+        "image/x-tga" = "nomacs.desktop";
+        "image/x-xcf" = "nomacs.desktop";
+        "image/svg+xml" = "nomacs.desktop";
+        "image/x-portable-pixmap" = "nomacs.desktop";
+        "image/x-portable-bitmap" = "nomacs.desktop";
+        "image/x-portable-graymap" = "nomacs.desktop";
+        "image/x-xpixmap" = "nomacs.desktop";
+        "image/x-xbitmap" = "nomacs.desktop";
+        "video/x-msvideo" = "vlc.desktop";
+        "video/x-matroska" = "vlc.desktop"; 
+        "video/webm" = "vlc.desktop";
+        "video/mp4" = "vlc.desktop";
+        "video/mpeg" = "vlc.desktop";
+        "video/ogg" = "vlc.desktop";
+        "video/quicktime" = "vlc.desktop";
+        "video/x-flv" = "vlc.desktop";
+        "video/3gpp" = "vlc.desktop";
+        "video/3gpp2" = "vlc.desktop";
+        "video/x-ms-wmv" = "vlc.desktop";
 
         "application/pdf" = "url-router.desktop";
         "text/calendar" = "morgen.desktop";
         "application/octet-stream" = "vlc.desktop";
         "inode/directory" = "nautilus.desktop";
-        "image/jpeg" = "nomacs.desktop";
-        "image/png" = "nomacs.desktop";
         "x-scheme-handler/mailto" = "thunderbird.desktop";
         "message/rfc822" = "thunderbird.desktop";
         "application/x-extension-eml" = "thunderbird.desktop";
@@ -43,6 +67,7 @@
       };
     };
   };
+  fonts.fontconfig.enable = true;
   
   home.pointerCursor = {
     name = "phinger-cursors-dark";
@@ -68,8 +93,8 @@
       package = pkgs.gruvbox-gtk-theme;
     };
     iconTheme = {
-      name = "Gruvbox-Plus-Dark";
-      package = pkgs.gruvbox-plus-icons;
+      name = "Gruvbox-Dark";
+      package = pkgs.gruvbox-dark-icons-gtk;
     };
     gtk4.extraConfig = {
       Settings = ''gtk-application-prefer-dark-theme=1'';
