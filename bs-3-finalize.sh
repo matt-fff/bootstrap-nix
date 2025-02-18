@@ -34,23 +34,21 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     sapling-scm-bin \
     xrdp \
     gnome-remote-desktop \
-    xrdp \ 
     cifs-utils
 
   sudo systemctl enable --now xrdp
-
+  
   # Check if ASDF config already exists before adding it to the shell
-  if [ ! -f ~/.config/nushell/env.nu ] || ! grep -q "ASDF_DIR =" ~/.config/nushell/env.nu; then
+  if [ ! -f ~/.config/nushell/env.nu ] || ! grep -q "asdf-completions=" ~/.config/nushell/env.nu; then
     echo "" >> ~/.config/nushell/env.nu
-    echo "\$env.ASDF_DIR = '/opt/asdf-vm/'" >> ~/.config/nushell/env.nu
-    echo "source /opt/asdf-vm/asdf.nu" >> ~/.config/nushell/env.nu
+    echo "source ~/.config/nushell/completions/asdf/asdf-completions.nu" >> ~/.config/nushell/env.nu
     echo "" >> ~/.config/nushell/env.nu
   fi
 
   for plugin in $(awk '{print $1}' ~/.tool-versions); do
-    /opt/asdf-vm/bin/asdf plugin add "$plugin"
+    asdf plugin add "$plugin"
   done
-  /opt/asdf-vm/bin/asdf install
+  asdf install
 fi
 
 cd "$SCRIPT_DIR" || {
