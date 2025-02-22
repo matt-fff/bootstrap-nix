@@ -35,13 +35,29 @@
     blender
     telegram-desktop
     thunderbird
+    android-tools
 
     # Unfree
     jetbrains.datagrip
     code-cursor
+    windsurf
     morgen
     megasync
     slack
     spotify
+    dropbox
   ];
+
+  systemd.user.services.dropbox = {
+        Unit = {
+            Description = "Dropbox service";
+        };
+        Install = {
+            WantedBy = [ "default.target" ];
+        };
+        Service = {
+            ExecStart = "${pkgs.dropbox}/bin/dropbox";
+            Restart = "on-failure";
+        };
+    };
 }

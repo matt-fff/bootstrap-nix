@@ -187,7 +187,6 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         starship \
         nushell \
         atuin \
-        zoxide \
         neovim \
         python-pynvim \
         jq \
