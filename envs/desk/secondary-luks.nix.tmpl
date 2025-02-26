@@ -12,6 +12,11 @@
       keyFile = "/cryptresources.key";
       fallbackToPassword = true; # Optional passphrase fallback
     };
+    cryptlibrary = {
+      device = "/dev/disk/by-uuid/9b6a9c24-504c-468b-ba2a-d4590d37bb43"; # find with lsblk -f
+      keyFile = "/cryptlibrary.key";
+      fallbackToPassword = true; # Optional passphrase fallback
+    };
   };
 
   fileSystems."/mnt/local-projects" = {
@@ -24,10 +29,17 @@
     fsType = "ext4";
     options = ["defaults" "noatime"];
   };
+  fileSystems."/mnt/local-library" = {
+    device = "/dev/mapper/cryptlibrary";
+    fsType = "ext4";
+    options = ["defaults" "noatime"];
+  };
 
   # Add keyfile to initrd secrets
+  # For additional keys, ❯ : sudo dd bs=512 count=4 if=/dev/urandom of=/etc/secrets/keys/cryptlibrary.key --iflag=fullbloc
   boot.initrd.secrets = {
     "/cryptprojects.key" = "/etc/secrets/keys/cryptprojects.key";
     "/cryptresources.key" = "/etc/secrets/keys/cryptresources.key";
+    "/cryptlibrary.key" = "/etc/secrets/keys/cryptlibrary.key";
   };
 }

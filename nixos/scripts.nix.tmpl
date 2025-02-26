@@ -1,0 +1,14 @@
+{ pkgs, config, ... }:
+
+{
+  # Create a symlink to /mnt/sync.sh
+  system.activationScripts.linkSyncScript = ''
+    mkdir -p /mnt
+    ln -sf ${NIXDIR}/scripts/sync.sh /mnt/sync.sh
+    chmod +x ${NIXDIR}/scripts/sync.sh
+    chown ${NIXUSER}: /mnt/sync.sh
+    mkdir -p /mnt/local-library
+    mkdir -p /mnt/local-resources
+    mkdir -p /mnt/local-projects
+  '';
+}

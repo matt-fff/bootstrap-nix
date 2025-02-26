@@ -5,8 +5,8 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LINUX_TYPE="${LINUX_TYPE:-nix}"
-NIXDIR="${NIXDIR:-/etc/nixos}"
 UPGRADE="${UPGRADE:-false}"
+export NIXDIR="${NIXDIR:-/etc/nixos}"
 
 # Check if script is run with sudo
 if [ "$(id -u)" -ne 0 ]; then
@@ -81,11 +81,16 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     nix-shell -p gettext --run "
         for base_dir in \"${SCRIPT_DIR}/nixos\" \"${SCRIPT_DIR}/envs/${HOSTNAME}\"; do
             if [ -d \"\$base_dir\" ]; then
-                for tmpl in \"\$base_dir\"/*.tmpl \"\$base_dir\"/**/*.tmpl; do
+                for tmpl in \"\$base_dir\"/*.tmpl \"\$base_dir\"/**/*.tmpl \"\$base_dir\"/*.nix \"\$base_dir\"/**/*.nix \"\$base_dir\"/*.sh \"\$base_dir\"/**/*.sh; do
                     if [ -f \"\$tmpl\" ]; then
                         # Extract relative path from base_dir
                         rel_path=\"\$(realpath --relative-to=\${base_dir} \"\$tmpl\")\"
                         rel_dir=\"\$(dirname \"\${rel_path}\")\"
+                        is_template=false
+                        if [ \"\${tmpl%.tmpl}\" != \"\${tmpl}\" ]; then
+                            is_template=true
+                        fi
+
                         filename=\"\$(basename \"\${tmpl%.tmpl}\")\"
 
                         # Create output path preserving directory structure
@@ -112,8 +117,13 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
                         # Create output directory if it doesn't exist
                         mkdir -p \"${NIXDIR}/\${rel_dir}\"
                         
-                        envsubst < \"\$tmpl\" > \"\$output_file\"
-                        printf 'Processed: \n\t%s \n\t-> %s\n' \"\$tmpl\" \"\$output_file\"
+                        if [ \"\$is_template\" = true ]; then
+                            envsubst < \"\$tmpl\" > \"\$output_file\"
+                            printf 'Processed Template: \n\t%s \n\t-> %s\n' \"\$tmpl\" \"\$output_file\"
+                        else
+                            cp \"\$tmpl\" \"\$output_file\"
+                            printf 'Processed File: \n\t%s \n\t-> %s\n' \"\$tmpl\" \"\$output_file\"
+                        fi
                     else
                         printf 'Skipping: %s\n' \"\$tmpl\"
                     fi
@@ -146,6 +156,11 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     done
 
     if [ "${UPGRADE}" = true ]; then
+        mv "${NIXDIR}/flake.lock" "${NIXDIR}/flake.lock.$(date +%Y%m%d).bak" || {
+            echo "Failed to create backup of flake.lock" 1>&2
+            exit 1
+        }
+        echo "Created backup of flake.lock"
         echo "Upgrading NixOS configuration"
         if ! nixos-rebuild switch --flake .\#${HOSTNAME} --option build-use-sandbox false --option eval-cache false; then
             echo "Failed to rebuild NixOS configuration" 1>&2

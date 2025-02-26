@@ -10,7 +10,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     customPkgs = {
-      url = "github:matt-fff/my-nixpkgs";
+      url = "github:matt-fff/my-nixpkgs/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     ${ADDITIONAL_INPUTS}
@@ -51,7 +51,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = ".hm.bak";
+            home-manager.backupFileExtension = ".hmgr.bak";
 
             home-manager.users.${NIXUSER} = (import ./home-manager/home.nix);
           }
