@@ -190,21 +190,6 @@
     '';
   };
   services.pcscd.enable = true;
-  services.kmscon = {
-    enable = true;
-    hwRender = true;
-    fonts = [
-      {
-        name = "ShureTechMono Nerd Font";
-        package = pkgs.nerd-fonts.shure-tech-mono;
-      }
-    ];
-    extraConfig= ''
-      font-size=16
-    '';
-    extraOptions = "";
-  };
-
   security.rtkit.enable = true;
   security.pam.loginLimits = [
     { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
