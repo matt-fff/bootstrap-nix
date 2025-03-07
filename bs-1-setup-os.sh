@@ -203,6 +203,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         nushell \
         atuin \
         neovim \
+        python-tabulate \
+        python-tomli \
         python-pynvim \
         jq \
         docker \
