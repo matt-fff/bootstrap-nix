@@ -9,4 +9,10 @@
        "4,9,14,19,24,29,34,39,44,49,54,59 * * * *      matt      /mnt/sync.sh library /mnt/doomnas/Library /mnt/local-library Audio,audiobooks,books,images,learn,papers"
     ];
   };
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+  };
 }
