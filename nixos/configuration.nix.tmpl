@@ -61,6 +61,15 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-32.3.3"
+  ];
+  nixpkgs.config.packageOverrides = pkgs: {
+    espanso = pkgs.espanso.override {
+      x11Support = false;
+      waylandSupport = true;
+    };
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

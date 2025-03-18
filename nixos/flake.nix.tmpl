@@ -25,12 +25,6 @@
             inherit system;
             config = {
               allowUnfree = true;
-              packageOverrides = pkgs: {
-                espanso = pkgs.espanso.override {
-                  x11Support = false;
-                  waylandSupport = true;
-                };
-              };
             };
           };
         };

@@ -156,11 +156,8 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     done
 
     if [ "${UPGRADE}" = true ]; then
-        mv "${NIXDIR}/flake.lock" "${NIXDIR}/flake.lock.$(date +%Y%m%d).bak" || {
-            echo "Failed to create backup of flake.lock" 1>&2
-            exit 1
-        }
-        echo "Created backup of flake.lock"
+        echo "Creating backup of flake.lock..."
+        mv "${NIXDIR}/flake.lock" "${NIXDIR}/flake.lock.$(date +%Y%m%d).bak" || echo "Failed. Skipping flake.lock backup"
         echo "Upgrading NixOS configuration"
         if ! nixos-rebuild switch --flake .\#${HOSTNAME} --option build-use-sandbox false --option eval-cache false; then
             echo "Failed to rebuild NixOS configuration" 1>&2
