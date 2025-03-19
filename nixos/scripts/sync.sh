@@ -74,7 +74,8 @@ for folder in ${FOLDERS}; do
         --exclude='old/' \
         --exclude='.Trash*' \
         --exclude='.stignore.*' \
-        --delete "${nas_dir}/" "${local_dir}/" &>> "${LOG_FILE}"; then
+        "${nas_dir}/" "${local_dir}/" &>> "${LOG_FILE}"; then
+        
         log_message "   Sync nas->local completed successfully."
     else
         log_message "   An error occurred during rsync." >&2
