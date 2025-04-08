@@ -165,7 +165,7 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
         fi
     else
         echo "Rebuilding NixOS configuration"
-        if ! nixos-rebuild switch; then
+        if ! nixos-rebuild switch --flake .\#${HOSTNAME} --option build-use-sandbox false; then
             echo "Failed to rebuild NixOS configuration" 1>&2
             exit 1
         fi
