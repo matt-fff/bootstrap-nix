@@ -45,7 +45,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = ".hmgr.bak";
+            home-manager.backupFileExtension = "${HOME_MANAGER_BAK}";
 
             home-manager.users.${NIXUSER} = (import ./home-manager/home.nix);
           }

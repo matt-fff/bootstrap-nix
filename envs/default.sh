@@ -41,3 +41,5 @@ export LOCALE="
     };
   };
   "
+
+export HOME_MANAGER_BAK="hmgr.$(date +%Y%m%d%H%M%S).bak"
