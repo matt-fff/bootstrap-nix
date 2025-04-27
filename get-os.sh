@@ -12,6 +12,10 @@ if [ -f /etc/os-release ]; then
         LINUX_TYPE="arch"
     elif [ "$ID" = "endeavouros" ]; then
         LINUX_TYPE="arch"
+    elif [ "$ID" = "cachyos" ]; then
+        LINUX_TYPE="arch"
+    elif [ "$ID_LIKE" = "arch" ]; then
+        LINUX_TYPE="arch" 
     else
         echo "Warning: Unsupported Linux distribution: $ID" >&2
         LINUX_TYPE="nix"  # Default to nix if unknown
