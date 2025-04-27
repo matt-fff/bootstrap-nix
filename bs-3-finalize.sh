@@ -32,9 +32,9 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
   yay -Sy --noconfirm --sudoloop \
     asdf-vm \
     sapling-scm-bin \
+    cifs-utils
     # xrdp \
     # gnome-remote-desktop \
-    cifs-utils
 
   # sudo systemctl enable --now xrdp
   
