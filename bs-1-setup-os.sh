@@ -208,7 +208,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         docker-compose \
         ttf-sharetech-mono-nerd \
         pinentry \
-        bat
+        bat \
+        yay
         # nix
 
     systemctl enable --now tailscaled
