@@ -4,7 +4,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-LINUX_TYPE="${LINUX_TYPE:-nix}"
+LINUX_TYPE="$(source ${SCRIPT_DIR}/get-os.sh)"
 UPGRADE="${UPGRADE:-false}"
 export NIXDIR="${NIXDIR:-/etc/nixos}"
 
