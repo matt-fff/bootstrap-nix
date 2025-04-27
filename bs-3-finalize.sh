@@ -32,11 +32,11 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
   yay -Sy --noconfirm --sudoloop \
     asdf-vm \
     sapling-scm-bin \
-    xrdp \
-    gnome-remote-desktop \
+    # xrdp \
+    # gnome-remote-desktop \
     cifs-utils
 
-  sudo systemctl enable --now xrdp
+  # sudo systemctl enable --now xrdp
   
   # Check if ASDF config already exists before adding it to the shell
   if [ ! -f ~/.config/nushell/env.nu ] || ! grep -q "asdf-completions=" ~/.config/nushell/env.nu; then
