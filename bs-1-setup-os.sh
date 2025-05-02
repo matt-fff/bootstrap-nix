@@ -209,7 +209,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         ttf-sharetech-mono-nerd \
         pinentry \
         bat \
-        yay
+        yay \
+        avahi
         # nix
 
     systemctl enable --now tailscaled

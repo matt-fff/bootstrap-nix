@@ -32,7 +32,67 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
   yay -Sy --noconfirm --sudoloop \
     asdf-vm \
     sapling-scm-bin \
-    cifs-utils
+    cifs-utils \
+    swaync \
+    swww \
+    waybar \
+    flameshot \
+    gruvbox-dark-gtk \
+    gruvbox-dark-icons-gtk \
+    libnotify \
+    wofi \
+    nwg-displays \
+    hyprpaper \
+    hyprlock \
+    hyprpicker \
+    hypridle \
+    cliphist \
+    wl-clipboard \
+    cliphist \
+    hyprcursor \
+    phinger-cursors \
+    hyprland-autoname-workspaces \
+    hyprpolkitagent \
+    waypaper \
+    vivaldi \
+    pavucontrol \
+    obs-studio \
+    sublime-text-4 \
+    vlc \
+    openscad \
+    nomacs \
+    chromium \
+    mullvad-vpn \
+    mullvad-browser-bin \
+    wev \
+    telegram-desktop \
+    blender \
+    thunderbird \
+    espanso-wayland \
+    simple-scan \
+    wev \
+    slack-desktop \
+    morgen-bin \
+    spotify-launcher \
+    dropbox \
+    visual-studio-code-bin \
+    windsurf \
+    cursor-bin \
+    peek \
+    cheese \
+    xarchiver \
+    bruno \
+    remmina \
+    bitwarden \
+    anki \
+    libreoffice-still \
+    gimp \
+    datagrip \
+    lan-mouse \
+    megacmd \
+    blueberry \
+    light
+
     # xrdp \
     # gnome-remote-desktop \
 
