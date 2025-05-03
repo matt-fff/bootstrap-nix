@@ -12,6 +12,8 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LINUX_TYPE="$(source ${SCRIPT_DIR}/get-os.sh)"
 
+mkdir ~/MEGA
+
 # Just in case it was left over from a previous run
 rm -f ~/.age/github.token 2>/dev/null || true
 
@@ -25,7 +27,7 @@ git -C ~/Workspaces/matt-fff/bootstrap-nix remote set-url origin git@github.com:
 echo "Cloning additional repositories..."
 
 # Clone workspaces repositories
-for repo in "deepthought" "cutter-templates"; do
+for repo in "deepthought" "cutter-templates" "datagrip"; do
     target_dir="$HOME/Workspaces/matt-fff/$repo"
     if [ ! -d "$target_dir" ]; then
         git clone "git@github.com:matt-fff/$repo.git" "$target_dir"
@@ -41,7 +43,6 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     cifs-utils \
     swaync \
     swww \
-    waybar \
     flameshot \
     gruvbox-dark-gtk \
     gruvbox-dark-icons-gtk \
@@ -99,12 +100,19 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     megacmd \
     blueberry \
     light \
+    nautilus \
+    btop \
+    kdiff3 \
+    fcron \
+    waybar \
+    ledger-live-bin
+
 
     # xrdp \
     # gnome-remote-desktop \
 
   # sudo systemctl enable --now xrdp
-  
+
   # Check if ASDF config already exists before adding it to the shell
   if [ ! -f ~/.config/nushell/env.nu ] || ! grep -q "asdf-completions=" ~/.config/nushell/env.nu; then
     echo "" >> ~/.config/nushell/env.nu
@@ -116,6 +124,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     asdf plugin add "$plugin"
   done
   asdf install
+
+
 fi
 
 cd "$SCRIPT_DIR" || {

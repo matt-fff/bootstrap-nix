@@ -14,6 +14,22 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
+# Get hostname from command line argument or prompt
+export HOSTNAME=$1
+if [ -z "$HOSTNAME" ]; then
+    echo -n "Enter hostname (default: newnix): "
+    read -r hostname
+    export HOSTNAME=${HOSTNAME:-newnix}
+fi
+
+# Always source the default environment
+. "${SCRIPT_DIR}/envs/default.sh"
+
+# Source environment overrides based on hostname
+if [ -f "${SCRIPT_DIR}/envs/${HOSTNAME}.sh" ]; then
+    . "${SCRIPT_DIR}/envs/${HOSTNAME}.sh"
+fi
+
 ########################################################
 # NixOS
 ########################################################
@@ -25,23 +41,6 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
     }
 
     mkdir -p home-manager
-
-    # Get hostname from command line argument or prompt
-    export HOSTNAME=$1
-    if [ -z "$HOSTNAME" ]; then
-        echo -n "Enter hostname (default: newnix): "
-        read -r hostname
-        export HOSTNAME=${HOSTNAME:-newnix}
-    fi
-
-    # Always source the default environment
-    . "${SCRIPT_DIR}/envs/default.sh"
-
-    # Source environment overrides based on hostname
-    if [ -f "${SCRIPT_DIR}/envs/${HOSTNAME}.sh" ]; then
-        . "${SCRIPT_DIR}/envs/${HOSTNAME}.sh"
-    fi
-
 
     # Create backup if it doesn't exist
     if [ ! -f configuration.nix.bak ] && [ -f configuration.nix ]; then
@@ -212,8 +211,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         yay \
         avahi \
         greetd \
-        greetd-tuigreet
-        # nix
+        greetd-tuigreet \
+        nix
 
     echo "Configuring greetd..."
     # groupadd -r greeter >/dev/null 2>&1 || true
@@ -225,20 +224,47 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     systemctl enable --now tailscaled
     systemctl enable --now docker
     systemctl enable --now greetd
+    systemctl enable --now nix-daemon
+    systemctl enable --now avahi-daemon
     tailscale up --ssh
 
     echo "Handling docker nonsense..."
     getent group docker >/dev/null 2>&1 || groupadd docker
     usermod -aG docker $NIXUSER || true
-    newgrp docker || true
+    # newgrp docker || true # This command starts a new shell, causing nesting. Group changes usually require logout/login anyway.
 
     echo "Updating shell"
     usermod --shell /usr/bin/nu $NIXUSER || {
         echo "Error: Failed to update shell" >&2
         exit 1
     }
-    # Because the above typically fails
+    # Because the above typically fails (silently)
     chsh -s /usr/bin/nu $NIXUSER
+
+    mkdir -p /mnt/nas/Library
+    mkdir -p /mnt/nas/Projects
+    mkdir -p /mnt/nas/Resources
+
+    if [ -f "${SCRIPT_DIR}/arch/extra-fstab" ]; then
+        echo "Processing extra fstab entries..."
+        while IFS= read -r line; do
+            # Skip empty lines and comments
+            if [ -n "$line" ] && [ "${line#\#}" != "$line" ]; then
+                continue
+            fi
+
+            # Check if the line is already in /etc/fstab
+            if ! grep -Fxq "$line" /etc/fstab; then
+                echo "$line" >> /etc/fstab
+                echo "Added to /etc/fstab: $line"
+            else
+                echo "Already in /etc/fstab: $line"
+            fi
+        done < "${SCRIPT_DIR}/arch/extra-fstab"
+    else
+        echo "No extra fstab file found at ${SCRIPT_DIR}/arch/extra-fstab"
+    fi
+    systemctl daemon-reload
 fi
 
 cd "$SCRIPT_DIR" || {

@@ -55,6 +55,32 @@ https://github.com/NixOS/nixos-hardware
 
 
 ## Misc
+### MEGA
+Run mega-cmd, which is interactive.
+```
+mkdir ~/MEGA
+mega-cmd
+```
+
+Login will prompt for password and 2-factor. Do not copy/paste the password or it will fail.
+```
+login <email>
+```
+
+Add the sync. It needs the full path
+```
+sync /home/matt/MEGA/ /
+```
+
+### Dropbox
+```
+dropbox-cli autostart y
+dropbox-cli start
+```
+The `start` command will automatically open your browser to authenticate.
+
+
 ### Firefox disable stupid search
 Set keyword.enabled to false in about:config
+
 
