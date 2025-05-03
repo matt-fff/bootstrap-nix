@@ -3,6 +3,12 @@
 # Exit on any error
 set -e
 
+# Check if running as root
+if [ "$(id -u)" -eq 0 ]; then
+  echo "Error: This script must not be run as root." >&2
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LINUX_TYPE="$(source ${SCRIPT_DIR}/get-os.sh)"
 
@@ -40,6 +46,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     gruvbox-dark-gtk \
     gruvbox-dark-icons-gtk \
     libnotify \
+    hyprland \
     wofi \
     nwg-displays \
     hyprpaper \
@@ -91,7 +98,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     lan-mouse \
     megacmd \
     blueberry \
-    light
+    light \
 
     # xrdp \
     # gnome-remote-desktop \

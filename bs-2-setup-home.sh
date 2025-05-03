@@ -3,6 +3,12 @@
 # Exit on any error
 set -e
 
+# Check if running as root
+if [ "$(id -u)" -eq 0 ]; then
+  echo "Error: This script must not be run as root." >&2
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LINUX_TYPE="$(source ${SCRIPT_DIR}/get-os.sh)"
 

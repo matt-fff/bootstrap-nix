@@ -210,11 +210,21 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         pinentry \
         bat \
         yay \
-        avahi
+        avahi \
+        greetd \
+        greetd-tuigreet
         # nix
+
+    echo "Configuring greetd..."
+    # groupadd -r greeter >/dev/null 2>&1 || true
+    # useradd -r -g greeter -d /var/lib/greetd -s /sbin/nologin -c "Greeter daemon user" greeter >/dev/null 2>&1 || true
+    cp /etc/greetd/config.toml /etc/greetd/config.toml.bak || true
+    rm /etc/greetd/config.toml || true
+    cp "${SCRIPT_DIR}/arch/greetd.toml" /etc/greetd/config.toml || true
 
     systemctl enable --now tailscaled
     systemctl enable --now docker
+    systemctl enable --now greetd
     tailscale up --ssh
 
     echo "Handling docker nonsense..."
@@ -227,6 +237,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         echo "Error: Failed to update shell" >&2
         exit 1
     }
+    # Because the above typically fails
+    chsh -s /usr/bin/nu $NIXUSER
 fi
 
 cd "$SCRIPT_DIR" || {
