@@ -82,7 +82,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     slack-desktop \
     morgen-bin \
     spotify-launcher \
-    dropbox \
+    dropbox-cli \
     visual-studio-code-bin \
     windsurf \
     cursor-bin \
