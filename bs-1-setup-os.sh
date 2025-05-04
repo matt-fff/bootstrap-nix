@@ -221,9 +221,14 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     rm /etc/greetd/config.toml || true
     cp "${SCRIPT_DIR}/arch/greetd.toml" /etc/greetd/config.toml || true
 
+
+    systemctl disable lightdm || true
+    systemctl disable sddm || true
+    systemctl disable gdm || true
+    systemctl enable --now greetd
+
     systemctl enable --now tailscaled
     systemctl enable --now docker
-    systemctl enable --now greetd
     systemctl enable --now nix-daemon
     systemctl enable --now avahi-daemon
     tailscale up --ssh
