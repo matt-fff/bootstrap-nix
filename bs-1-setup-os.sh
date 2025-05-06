@@ -212,6 +212,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         avahi \
         greetd \
         greetd-tuigreet \
+        pcsc-tools \
         nix
 
     echo "Configuring greetd..."
@@ -231,6 +232,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     systemctl enable --now docker
     systemctl enable --now nix-daemon
     systemctl enable --now avahi-daemon
+    systemctl enable --now pcscd
     tailscale up --ssh
 
     echo "Handling docker nonsense..."

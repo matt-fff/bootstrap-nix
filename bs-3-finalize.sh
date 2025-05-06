@@ -106,7 +106,9 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     fcron \
     waybar \
     ledger-live-bin \
-    network-manager-applet
+    network-manager-applet \
+    yubico-authenticator-bin \
+    ttf-sharetech-mono-nerd
 
 
     # xrdp \
