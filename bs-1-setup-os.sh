@@ -209,11 +209,14 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         pinentry \
         bat \
         yay \
-        avahi \
         greetd \
         greetd-tuigreet \
         pcsc-tools \
-        nix
+        v4l2loopback-dkms \
+        v4l2loopback-utils \
+        nix \
+        networkmanager \
+        nm-connection-editor
 
     echo "Configuring greetd..."
     # groupadd -r greeter >/dev/null 2>&1 || true
@@ -231,7 +234,6 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     systemctl enable --now tailscaled
     systemctl enable --now docker
     systemctl enable --now nix-daemon
-    systemctl enable --now avahi-daemon
     systemctl enable --now pcscd
     tailscale up --ssh
 

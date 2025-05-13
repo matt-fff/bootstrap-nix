@@ -17,7 +17,6 @@ mkdir -p ~/MEGA
 # Just in case it was left over from a previous run
 rm -f ~/.age/github.token 2>/dev/null || true
 
-
 # Set the remote URLs for the repositories
 echo "Fixing remote URLs for the repositories to use SSH..."
 git -C ~/.config/chezmoi remote set-url origin git@github.com:matt-fff/.chezmoi.git
@@ -28,12 +27,12 @@ echo "Cloning additional repositories..."
 
 # Clone workspaces repositories
 for repo in "deepthought" "cutter-templates" "datagrip"; do
-    target_dir="$HOME/Workspaces/matt-fff/$repo"
-    if [ ! -d "$target_dir" ]; then
-        git clone "git@github.com:matt-fff/$repo.git" "$target_dir"
-    else
-        echo "Directory already exists: $target_dir"
-    fi
+  target_dir="$HOME/Workspaces/matt-fff/$repo"
+  if [ ! -d "$target_dir" ]; then
+    git clone "git@github.com:matt-fff/$repo.git" "$target_dir"
+  else
+    echo "Directory already exists: $target_dir"
+  fi
 done
 
 if [ "${LINUX_TYPE}" == "arch" ]; then
@@ -43,7 +42,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     cifs-utils \
     swaync \
     swww \
-    flameshot \
+    grim \
+    flameshot-git \
     gruvbox-dark-gtk \
     gruvbox-dark-icons-gtk \
     libnotify \
@@ -100,7 +100,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     megacmd \
     blueberry \
     light \
-    nautilus \
+    thunar \
     btop \
     kdiff3 \
     fcron \
@@ -108,19 +108,22 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     ledger-live-bin \
     network-manager-applet \
     yubico-authenticator-bin \
-    ttf-sharetech-mono-nerd
+    xdg-desktop-portal-hyprland-git \
+    xdg-desktop-portal-gtk \
+    ttf-sharetech-mono-nerd \
+    etcher-bin \
+    btop
 
-
-    # xrdp \
-    # gnome-remote-desktop \
+  # xrdp \
+  # gnome-remote-desktop \
 
   # sudo systemctl enable --now xrdp
 
   # Check if ASDF config already exists before adding it to the shell
   if [ ! -f ~/.config/nushell/env.nu ] || ! grep -q "asdf-completions=" ~/.config/nushell/env.nu; then
-    echo "" >> ~/.config/nushell/env.nu
-    echo "source ~/.config/nushell/completions/asdf/asdf-completions.nu" >> ~/.config/nushell/env.nu
-    echo "" >> ~/.config/nushell/env.nu
+    echo "" >>~/.config/nushell/env.nu
+    echo "source ~/.config/nushell/completions/asdf/asdf-completions.nu" >>~/.config/nushell/env.nu
+    echo "" >>~/.config/nushell/env.nu
   fi
 
   for plugin in $(awk '{print $1}' ~/.tool-versions); do
@@ -128,6 +131,9 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
   done
   asdf install
 
+  #  gsettings set org.gnome.desktop.interface gtk-theme gruvbox-dark-gtk
+  #  gsettings set org.gnome.desktop.interface icon-theme gruvbox-dark-gtk
+  #  gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 
 fi
 
