@@ -72,6 +72,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     chromium \
     mullvad-vpn \
     mullvad-browser-bin \
+    torbrowser-launcher \
     wev \
     telegram-desktop \
     blender \
@@ -112,6 +113,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     xdg-desktop-portal-gtk \
     ttf-sharetech-mono-nerd \
     etcher-bin \
+    clipnotify \
     btop
 
   # xrdp \

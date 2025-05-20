@@ -216,6 +216,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         v4l2loopback-utils \
         nix \
         networkmanager \
+        mpv \
         nm-connection-editor
 
     echo "Configuring greetd..."
