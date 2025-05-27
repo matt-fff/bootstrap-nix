@@ -56,25 +56,25 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
         if ! echo "{ config, lib, pkgs, ... }:
 
     {
-    boot.initrd.luks.devices = {" > luks-configuration.nix; then
+    boot.initrd.luks.devices = {" >luks-configuration.nix; then
             echo "Failed to create luks-configuration.nix" 1>&2
             exit 1
         fi
 
-        if ! grep "boot.initrd.luks.devices" configuration.nix | sed 's/^.*devices\./    /' >> luks-configuration.nix; then
+        if ! grep "boot.initrd.luks.devices" configuration.nix | sed 's/^.*devices\./    /' >>luks-configuration.nix; then
             echo "Failed to extract LUKS configuration" 1>&2
             exit 1
         fi
 
         if ! echo "  };
-    }" >> luks-configuration.nix; then
+    }" >>luks-configuration.nix; then
             echo "Failed to complete luks-configuration.nix" 1>&2
             exit 1
         fi
-        
+
         echo "Created luks-configuration.nix"
     fi
-    
+
     echo "Processing templates..."
     # Find all .tmpl files and process them with envsubst
     nix-shell -p gettext --run "
@@ -131,21 +131,20 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
                 printf 'Directory not found: %s\n' \"\$base_dir\"
             fi
         done" || {
-            echo "Failed to process templates" 1>&2
-            exit 1
-        }
+        echo "Failed to process templates" 1>&2
+        exit 1
+    }
     echo "Templates processed"
-
 
     # Add additional configuration imports
     find "${NIXDIR}" -type f -name "*.nix" | while read -r config_file; do
         basename_file=$(basename "$config_file")
         # Skip specific files and home-manager directory
-        if [[ "$basename_file" != "configuration.nix" && \
-              "$basename_file" != "flake.nix" && \
-              ! "$config_file" =~ /home-manager/ ]]; then
+        if [[ "$basename_file" != "configuration.nix" &&
+            "$basename_file" != "flake.nix" &&
+            ! "$config_file" =~ /home-manager/ ]]; then
             config_import="\.\/${basename_file}"
-            
+
             if ! sed -i '/\.\/configuration.nix/a\          '"$config_import" flake.nix; then
                 echo "Failed to add $basename_file import" 1>&2
                 exit 1
@@ -172,7 +171,6 @@ if [ "${LINUX_TYPE}" == "nix" ]; then
 
     echo "Successfully completed NixOS configuration update"
 fi
-
 
 ########################################################
 # Arch Linux
@@ -217,7 +215,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         nix \
         networkmanager \
         mpv \
-        nm-connection-editor
+        nm-connection-editor \
+        ffmpeg
 
     echo "Configuring greetd..."
     # groupadd -r greeter >/dev/null 2>&1 || true
@@ -226,16 +225,17 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     rm /etc/greetd/config.toml || true
     cp "${SCRIPT_DIR}/arch/greetd.toml" /etc/greetd/config.toml || true
 
-
     systemctl disable lightdm || true
     systemctl disable sddm || true
     systemctl disable gdm || true
     systemctl enable --now greetd
 
-    systemctl enable --now tailscaled
     systemctl enable --now docker
     systemctl enable --now nix-daemon
     systemctl enable --now pcscd
+
+    cp "${SCRIPT_DIR}/arch/99-tailscale.conf" /etc/NetworkManager/conf.d/99-tailscale.conf || true
+    systemctl enable --now tailscaled
     tailscale up --ssh
 
     echo "Handling docker nonsense..."
@@ -265,12 +265,12 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
 
             # Check if the line is already in /etc/fstab
             if ! grep -Fxq "$line" /etc/fstab; then
-                echo "$line" >> /etc/fstab
+                echo "$line" >>/etc/fstab
                 echo "Added to /etc/fstab: $line"
             else
                 echo "Already in /etc/fstab: $line"
             fi
-        done < "${SCRIPT_DIR}/arch/extra-fstab"
+        done <"${SCRIPT_DIR}/arch/extra-fstab"
     else
         echo "No extra fstab file found at ${SCRIPT_DIR}/arch/extra-fstab"
     fi
@@ -278,6 +278,6 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
 fi
 
 cd "$SCRIPT_DIR" || {
-  echo "Error: Failed to change to script directory" >&2
-  exit 1
+    echo "Error: Failed to change to script directory" >&2
+    exit 1
 }
