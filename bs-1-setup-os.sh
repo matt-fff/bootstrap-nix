@@ -216,7 +216,8 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         networkmanager \
         mpv \
         nm-connection-editor \
-        ffmpeg
+        ffmpeg \
+        valkey
 
     echo "Configuring greetd..."
     # groupadd -r greeter >/dev/null 2>&1 || true
@@ -233,6 +234,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     systemctl enable --now docker
     systemctl enable --now nix-daemon
     systemctl enable --now pcscd
+    systemctl enable --now valkey
 
     cp "${SCRIPT_DIR}/arch/99-tailscale.conf" /etc/NetworkManager/conf.d/99-tailscale.conf || true
     systemctl enable --now tailscaled
