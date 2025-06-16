@@ -113,3 +113,9 @@ browser.fixup.dns_first_for_single_words
 
 Set to false:
 keyword.enabled
+
+#### crontabs
+
+```
+*/5 * * * * /home/matt/.local/bin/auto-commit >> /dev/null 2>&1
+```
