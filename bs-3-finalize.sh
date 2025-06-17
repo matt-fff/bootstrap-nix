@@ -91,6 +91,7 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     cheese \
     xarchiver \
     bruno \
+    broot \
     remmina \
     bitwarden \
     anki \
@@ -102,7 +103,6 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     blueberry \
     light \
     thunar \
-    btop \
     kdiff3 \
     fcron \
     waybar \
