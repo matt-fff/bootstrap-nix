@@ -114,6 +114,9 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     ttf-sharetech-mono-nerd \
     etcher-bin \
     clipnotify \
+    fzf \
+    hyprland-autoname-workspaces-git \
+    windsurf \
     btop
 
   # xrdp \
