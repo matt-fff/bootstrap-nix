@@ -99,7 +99,6 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
     gimp \
     datagrip \
     lan-mouse \
-    megacmd \
     blueberry \
     light \
     thunar \

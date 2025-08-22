@@ -217,6 +217,9 @@ if [ "${LINUX_TYPE}" == "arch" ]; then
         mpv \
         nm-connection-editor \
         ffmpeg \
+        libsecret \
+        base-devel \
+        syncthing \
         valkey
 
     echo "Configuring greetd..."
